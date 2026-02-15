@@ -8,3 +8,10 @@ cd daily-quest-tracker/server
 npm install
 node server
 ```
+
+Start Web server (dev):
+```
+cd daily-quest-tracker/server
+npm install
+npm run dev
+```
