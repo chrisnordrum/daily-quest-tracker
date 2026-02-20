@@ -32,7 +32,7 @@ cp config.env.example config.env
 npm run dev
 ```
 
-2. In a new terminal window, go to the project directory to start the client
+2. Open another terminal window, go to the project directory to start the client
 ```
 cd client
 npm run dev
