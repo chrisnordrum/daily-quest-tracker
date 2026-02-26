@@ -1,3 +1,38 @@
+@font-face {
+    font-family: 'Geologica';
+    src: url('assets/fonts/Geologica-Black.ttf') format('truetype');
+    font-weight: 900;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Alexandria';
+    src: url('assets/fonts/Alexandria-VariableFont_wght.ttf') format('truetype');
+    font-weight: 100 900; /* variable range */
+    font-style: normal;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+    --darkmode-bg: 0 24 46;
+    --darkmode-txt: 255 255 255;
+
+    --lightmode-bg: 244 251 255;
+    --lightmode-txt: 0 37 72;
+}
+
+body {
+    font-family: 'Alexandria', sans-serif;
+    background-color: rgb(var(--lightmode-bg));
+    color: rgb(var(--lightmode-txt));
+}
+
+h1 {
+    font-family: 'Geologica', sans-serif;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    text-transform: uppercase;
+    line-height: 1;
+}
