@@ -18,6 +18,31 @@ app.get("/api/hello", (req, res) => {
   });
 });
 
+// GET all quests
+app.get("/quests", (req, res) => {
+  res.send("GET /quests");
+});
+
+// GET a specific quest
+app.get("/quests/:id", (req, res) => {
+  res.send(`GET /quests/${req.params.id}`);
+});
+
+// POST a new quest
+app.post("/quests", (req, res) => {
+  res.send("POST /quests");
+});
+
+// PATCH a specific quest
+app.patch("/quests/:id", (req, res) => {
+  res.send("patch /quests/${req.params.id}");
+});
+
+// DELETE a specific quest
+app.delete("/quests/:id", (req, res) => {
+  res.send("delete /quests/${req.params.id}");
+});
+
 // SPA fallback
 app.get("/*splat", (req, res) => {
   res.sendFile(path.join(distPath, "index.html"));
