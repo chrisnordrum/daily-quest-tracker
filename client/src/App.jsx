@@ -12,7 +12,7 @@ function App() {
       <Nav />
       <Routes>
         <Route index element={<Home />} />
-        <Route path="/quests" element={<Quest />} />
+        <Route path="/quest" element={<Quest />} />
         <Route path="/guild" element={<Guild />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="*" element={<NotFound />} />

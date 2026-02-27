@@ -1,5 +1,3 @@
-import React from "react";
-
 const QuestCard = ({ quest }) => {
   return (
     <div className="flex flex-col justify-between bg-full-white shadow-neutral-300 shadow-md rounded-xl p-5 border-2 border-chosen-blue hover:translate-y-[-2px] transition-transform duration-200">
