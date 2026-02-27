@@ -1,17 +1,20 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  darkMode: "media", 
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+  darkMode: "class",
+  content: ["./index.html", "./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
       colors: {
-        "chosen-blue": "#00182E",
-        "arctic-ice": "#F4FBFF",
-        "dark-ocean": "#002548",
-        "full-white": "#FFFFFF",
+        bg: "var(--color-bg)",
+        fg: "var(--color-fg)",
+        card: "var(--color-card)",
+        border: "var(--color-border)",
+        primary: "var(--color-primary)",
+        accent: "var(--color-accent)",
+      },
+      fontFamily: {
+        sans: ["Alexandria", "sans-serif"],
+        display: ["Geologica", "sans-serif"],
       },
     },
   },

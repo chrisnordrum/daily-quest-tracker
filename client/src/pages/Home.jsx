@@ -1,26 +1,52 @@
-import { useState, useEffect } from "react";
+import QuestGrid from "../components/QuestGrid";
 
 export default function Home() {
-  const [data, setData] = useState(null);
-  const [error, setError] = useState(null);
+return (
+      <main className="relative min-h-screen overflow-hidden bg-gradient-to-br from-primary/10 via-bg to-accent/20"> 
+        <div className="absolute -top-40 -left-40 w-96 h-96 bg-indigo-400 dark:bg-indigo-600 opacity-30 rounded-full blur-3xl" />
 
-  // Fetch "Hello" message
-  useEffect(() => {
-    fetch("/api/quests")
-      .then((res) => {
-        if (!res.ok) throw new Error(`Server responded with ${res.status}`);
-        return res.json();
-      })
-      .then((json) => setData(json))
-      .catch((err) => setError(err.message));
-  }, []);
+        <div className="absolute top-40 -right-40 w-96 h-96 bg-purple-400 dark:bg-purple-600 opacity-30 rounded-full blur-3xl" />
 
-  if (error) return <main><h1 className="text-center mt-10 text-purple-400">Home</h1><p className="text-center mt-5">Something went wrong: {error}</p></main>;
-  
-  return (
-    <main>
-      <h1 className="text-center mt-10 text-purple-400">Home</h1>
-      {data && <p className="text-center mt-5">{data.message}</p>}
+        <div className="relative z-10"> 
+
+          <section className="flex flex-col justify-center items-center gap-4 mx-auto text-center border-2 border-border rounded-xl w-full p-6 sm:p-8 mb-6">
+
+            <h1 className="h1-home text-fg text-left">
+              Do.
+              <span className="text-accent block">Outplay.</span>
+              <span className="text-fg block">Rank.</span>
+              <span className="text-accent block">Conquer.</span>  
+            </h1>
+
+            <p className="text-center sm:text-left text-sm sm:text-base text-fg/80 font-normal">
+              Track your daily quests and conquer your day!
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-2 w-full justify-center sm:align-center">
+              <button className="px-6 py-3 border-2 border-accent text-accent sm:w-fit rounded-full hover:bg-accent hover:text-fg transition duration-200 ease-in">
+                Register
+              </button>
+            
+              <button className="
+                px-6 py-3
+                bg-accent text-white
+                sm:w-fit
+                rounded-full
+                transition duration-200 ease-in-out
+                hover:bg-primary
+                dark:bg-accent
+                dark:hover:bg-card
+                dark:hover:border-accent
+                dark:hover:text-fg
+              ">
+                Sign In
+              </button>
+            </div>
+
+          </section>
+
+          <QuestGrid limit={3}/>
+      </div>  
     </main>
   );
 }

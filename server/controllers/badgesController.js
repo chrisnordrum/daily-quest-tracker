@@ -3,7 +3,7 @@ const { getData } = require("../models/db");
 
 /**
  * Controller: Get all badges
- *
+ * 
  * Handles GET requests to fetch all badges from the database.
  *
  * @param {Object} req - Express request object

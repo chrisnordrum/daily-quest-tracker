@@ -1,50 +1,105 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
-import { FiMenu } from "react-icons/fi";
+import {
+  RiHomeFill,
+  RiCompass3Fill,
+  RiTeamFill,
+  RiTrophyFill,
+  RiUserFill,
+} from "react-icons/ri";
 
-export default function Navbar() {
-  const [open, setOpen] = useState(false);
-
+export default function Nav() {
   return (
-    <header className="sticky top-0 z-50 w-full bg-chosen-blue text-full-white">
-      <nav className="mx-auto flex max-w-6xl items-center justify-between px-10 py-5">
-        <Link to="/">
-          <img src="/dorc-typeface.png" alt="Dorc Logo" width={120} height={50} className="hover:opacity-70"/>
-        </Link>
+    <>
+      <header className="sticky top-0 z-50 w-full bg-bg text-fg border-b-2 border-border">
+        <nav className="mx-auto flex items-center px-6 sm:px-10 py-4 sm:py-5">
 
-        <ul className="hidden items-center gap-6 md:flex">
-          <li><Link className="hover:text-blue-300" to="/quests">Quests</Link></li>
-          <li><Link className="hover:text-blue-300" to="/guild">Guild</Link></li>
-          <li><Link className="hover:text-blue-300" to="/leaderboard">Leaderboard</Link></li>
-          <li><Link className="hover:text-blue-300" to="/profile">Profile</Link></li>
-          
+          <div className="flex-1 sm:hidden" />
+
+          <Link
+            to="/"
+            className="flex justify-center sm:justify-start flex-1"
+          >
+            <img
+              src="/dorc-typeface.png"
+              alt="Dorc Logo"
+              className="w-24 md:w-32 hover:opacity-70 transition-opacity"
+            />
+          </Link>
+
+          {/* Desktop Navigation */}
+          <ul className="hidden sm:flex items-center gap-6 ml-auto">
+
+            <li>
+              <Link className="hover:text-accent transition-colors" to="/quest">
+                Quests
+              </Link>
+            </li>
+
+            <li>
+              <Link className="hover:text-accent transition-colors" to="/guild">
+                Guild
+              </Link>
+            </li>
+
+            <li>
+              <Link className="hover:text-accent transition-colors" to="/leaderboard">
+                Leaderboard
+              </Link>
+            </li>
+
+            <li>
+              <Link className="hover:text-accent transition-colors" to="/profile">
+                Profile
+              </Link>
+            </li>
+
+          </ul>
+
+          <div className="flex-1 sm:hidden" />
+        </nav>
+      </header>
+
+      {/* Mobile Navigation */}
+      <nav className="fixed bottom-1 left-0 right-0 z-50 border-2 border-border bg-bg backdrop-blur-md rounded-full sm:hidden">
+        <ul className="flex justify-around items-center py-2 text-fg">
+
+          <li>
+            <Link to="/" className="flex flex-col items-center gap-1 hover:text-accent transition-colors">
+              <RiHomeFill size={20} />
+              <span className="text-xs">Home</span>
+            </Link>
+          </li>
+
+          <li>
+            <Link to="/quest" className="flex flex-col items-center gap-1 hover:text-accent transition-colors">
+              <RiCompass3Fill size={20} />
+              <span className="text-xs">Quests</span>
+            </Link>
+          </li>
+
+          <li>
+            <Link to="/guild" className="flex flex-col items-center gap-1 hover:text-accent transition-colors">
+              <RiTeamFill size={20} />
+              <span className="text-xs">Guild</span>
+            </Link>
+          </li>
+
+          <li>
+            <Link to="/leaderboard" className="flex flex-col items-center gap-1 hover:text-accent transition-colors">
+              <RiTrophyFill size={20} />
+              <span className="text-xs">Ranks</span>
+            </Link>
+          </li>
+
+          <li>
+            <Link to="/profile" className="flex flex-col items-center gap-1 hover:text-accent transition-colors">
+              <RiUserFill size={20} />
+              <span className="text-xs">Profile</span>
+            </Link>
+          </li>
+
         </ul>
-
-        <button
-          className="md:hidden p-3 text-xl hover:text-blue-300"
-          onClick={() => setOpen(!open)}
-          aria-label="Toggle menu"
-        >
-            <FiMenu />
-        </button>
       </nav>
-
-      {open && (
-        <ul className="md:hidden bg-chosen-blue text-full-white items-center gap-4 py-5 px-5 border-t border-full-white/10">
-          <li className="py-3 hover:text-blue-300">
-            <Link to="/" onClick={() => setOpen(false)}>Home</Link>
-          </li>
-          <li className="py-3 hover:text-blue-300">
-            <Link to="/guild" onClick={() => setOpen(false)}>Guild</Link>
-          </li>
-          <li className="py-3 hover:text-blue-300">
-            <Link className="" to="/leaderboard" onClick={() => setOpen(false)}>Leaderboard</Link>
-          </li>
-          <li className="py-3 hover:text-blue-300">
-            <Link to="/profile" onClick={() => setOpen(false)}>Profile</Link>
-          </li>
-        </ul>
-      )}
-    </header>
+    </>
   );
 }

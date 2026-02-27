@@ -2,9 +2,9 @@
 const { getData } = require("../models/db");
 
 /**
- * Controller: Get all daily quotes
- *
- * Handles GET requests to fetch all daily quotes from the database.
+ * Controller: Get daily quotes
+ * 
+ * Handles GET requests to fetch daily quotes from the database.
  *
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object

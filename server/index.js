@@ -8,6 +8,22 @@ const hsts = require("hsts");
 const PORT = process.env.PORT || 5050;
 const app = express();
 
+// Security headers
+const helmet = require("helmet");
+app.use(
+  helmet({
+    // Sets default HTTP response headers from Helmet middleware
+    //
+    // HTTP response header configurations:
+    contentSecurityPolicy: {
+      directives: {
+        frameAncestors: ["'none'"], // The document cannot be loaded in any frame => to avoid clickjacking attacks
+      },
+    },
+    xFrameOptions: { action: "deny" }, // Legacy fallback for CSP: frameAncestors
+  }),
+);
+
 const distPath = path.join(__dirname, "..", "client", "dist");
 app.use(express.static(distPath));
 
@@ -22,14 +38,6 @@ app.use(
     },
   }),
 );
-
-// API routes
-app.get("/api/hello", (req, res) => {
-  res.json({
-    message: "Hello from the Express server!",
-    timestamp: new Date().toISOString(),
-  });
-});
 
 // API routes using the index.js file in the routes folder
 // (Users, Quests, Ranks, Badges, Daily Quotes)
