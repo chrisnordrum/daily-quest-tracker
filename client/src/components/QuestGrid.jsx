@@ -16,7 +16,7 @@ const Quest = ({ limit }) => {
 
   return (
     <main className="p-6">
-      <div className="grid grid-cols-[repeat(auto-fit,_minmax(300px,_1fr))] gap-6 mt-4">
+      <div className="grid grid-cols-[repeat(auto-fit,_minmax(280px,_1fr))] gap-6 mt-4">
         {displayedQuests.map((quest) => (
           <QuestCard key={quest.id} quest={quest} />
         ))}

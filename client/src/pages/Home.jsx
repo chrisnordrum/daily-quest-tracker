@@ -26,7 +26,7 @@ export default function Home() {
 
   return (
     <main>
-      <h1 className="text-center text-dark-ocean">
+      <h1 className="text-fg">
         Do. Outplay. Rank. Conquer.
       </h1>
 
