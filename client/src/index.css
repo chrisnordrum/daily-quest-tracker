@@ -1,15 +1,15 @@
 @font-face {
-    font-family: 'Geologica';
-    src: url('assets/fonts/Geologica-Black.ttf') format('truetype');
-    font-weight: 900;
-    font-style: normal;
+  font-family: "Geologica";
+  src: url("assets/fonts/Geologica-Black.ttf") format("truetype");
+  font-weight: 900;
+  font-style: normal;
 }
 
 @font-face {
-    font-family: 'Alexandria';
-    src: url('assets/fonts/Alexandria-VariableFont_wght.ttf') format('truetype');
-    font-weight: 100 900; /* variable range */
-    font-style: normal;
+  font-family: "Alexandria";
+  src: url("assets/fonts/Alexandria-VariableFont_wght.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
 }
 
 @tailwind base;
@@ -17,33 +17,45 @@
 @tailwind utilities;
 
 :root {
-    --darkmode-bg: 0 24 46;
-    --darkmode-txt: 255 255 255;
+  --color-bg: #f4fbff;
+  --color-fg: #00182e;
+  --color-card: #ffffff;
+  --color-border: #002548;
+  --color-primary: #002548;
 
-    --lightmode-bg: 244 251 255;
-    --lightmode-txt: 0 37 72;
+  --color-accent: #5aa7ff;
+}
+
+html.dark {
+  --color-bg: #00182e;
+  --color-fg: #f4fbff;
+  --color-card: #002548;
+  --color-border: #5aa7ff;
+  --color-primary: #5aa7ff;
+  --color-accent: #5aa7ff;
 }
 
 body {
-    font-family: 'Alexandria', sans-serif;
-    background-color: rgb(var(--lightmode-bg));
-    color: rgb(var(--lightmode-txt));
+  background-color: var(--color-bg);
+  color: var(--color-fg);
+  font-family: "Alexandria", sans-serif;
 }
 
-main, nav {
-    max-width: 1400px;
-    margin: 0 auto;
+main,
+nav {
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 main {
-    padding: 2rem;
+  padding: 2rem 0;
 }
 
 h1 {
-    font-family: 'Geologica', sans-serif;
-    font-size: clamp(2.5rem, 5vw, 4rem);
-    text-transform: uppercase;
-    line-height: 1;
-    text-align: center;
+  font-family: "Geologica", sans-serif;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  text-transform: uppercase;
+  line-height: 1;
+  text-align: center;
+  color: var(--color-fg);
 }
-

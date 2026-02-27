@@ -5,8 +5,29 @@ import Nav from "./components/Nav.jsx";
 import Guild from "./pages/Guild";
 import Leaderboard from "./pages/Leaderboard";
 import Quest from "./pages/Quest.jsx";
+import { useEffect } from "react";
 
 function App() {
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+
+    const apply = (isDark) => {
+      document.documentElement.classList.toggle("dark", isDark);
+    };
+
+    apply(mq.matches);
+
+    const handler = (e) => apply(e.matches);
+
+    if (mq.addEventListener) mq.addEventListener("change", handler);
+    else mq.addListener(handler);
+
+    return () => {
+      if (mq.removeEventListener) mq.removeEventListener("change", handler);
+      else mq.removeListener(handler);
+    };
+  }, []);
+
   return (
     <>
       <Nav />
@@ -18,7 +39,7 @@ function App() {
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
