@@ -39,14 +39,6 @@ app.use(
   }),
 );
 
-// API routes
-app.get("/api/hello", (req, res) => {
-  res.json({
-    message: "Hello from the Express server!",
-    timestamp: new Date().toISOString(),
-  });
-});
-
 // API routes using the index.js file in the routes folder
 // (Users, Quests, Ranks, Badges, Daily Quotes)
 // MVC pattern

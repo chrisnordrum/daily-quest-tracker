@@ -1,30 +1,7 @@
-import { useState, useEffect } from "react";
 import QuestGrid from "../components/QuestGrid";
 
 export default function Home() {
-  const [data, setData] = useState(null);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    fetch("/api/hello")
-      .then((res) => {
-        if (!res.ok) throw new Error(`Server responded with ${res.status}`);
-        return res.json();
-      })
-      .then((json) => setData(json))
-      .catch((err) => setError(err.message));
-  }, []);
-
-  if (error) {
-    return (
-      <main className="min-h-screen bg-gradient-to-br from-primary/10 via-bg to-accent/20">
-        <h1 className="text-center mt-10 text-purple-400">Home</h1>
-        <p className="text-center mt-5">Something went wrong: {error}</p>
-      </main>
-    );
-  }
-
-  return (
+return (
       <main className="relative min-h-screen overflow-hidden bg-gradient-to-br from-primary/10 via-bg to-accent/20"> 
         <div className="absolute -top-40 -left-40 w-96 h-96 bg-indigo-400 dark:bg-indigo-600 opacity-30 rounded-full blur-3xl" />
 
