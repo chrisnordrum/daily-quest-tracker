@@ -2,6 +2,8 @@
 const path = require("path");
 const express = require("express");
 const fs = require("fs");
+const https = require('https');
+const hsts = require('hsts');
 
 const PORT = process.env.PORT || 5050;
 const app = express();
@@ -71,7 +73,28 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: "Internal Server Error" });
 });
 
+// Apply HSTS middleware to the HTTPS server
+const hstsOptions = {
+    maxAge: 31536000, // 1 year in seconds
+    includeSubDomains: true, // Apply HSTS to all subdomains
+    preload: true // Include this site in the HSTS preload list
+};
+
+// Create HTTPS server with SSL certificate
+const options = {
+    key: fs.readFileSync('private-key.pem'), // Path to your private key
+    cert: fs.readFileSync('certificate.pem'), // Path to your certificate
+};
+
+// Create HTTPS server
+const httpsServer = https.createServer(options, (req, res) => {
+    // Apply HSTS middleware
+    hsts(hstsOptions)(req, res, () => {
+        app(req, res);
+    });
+});
+
 // start the Express server
-app.listen(PORT, () => {
-  console.log(`Server listening at http://localhost:${PORT}`);
+httpsServer.listen(PORT, () => {
+    console.log(`HTTPS Server running at https://localhost:${PORT}`);
 });
