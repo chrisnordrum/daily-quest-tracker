@@ -12,6 +12,9 @@ const { getData } = require("../models/db");
  */
 const getBadges = async (req, res) => {
   try {
+    // Reasons for caching the response for 1 month:
+    // The content is static and does not change frequently.
+    res.set("Cache-Control", "max-age=2592000");
     const data = await getData();
     res.status(200).json(data.badges);
   } catch (error) {
