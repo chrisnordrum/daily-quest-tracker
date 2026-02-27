@@ -15,7 +15,12 @@ app.use(
     // Sets default HTTP response headers from Helmet middleware
     //
     // HTTP response header configurations:
-    xFrameOptions: { action: "deny" }, // The document cannot be loaded in any frame => to avoid clickjacking attacks
+    contentSecurityPolicy: {
+      directives: {
+        frameAncestors: ["'none'"], // The document cannot be loaded in any frame => to avoid clickjacking attacks
+      },
+    },
+    xFrameOptions: { action: "deny" }, // Legacy fallback for CSP: frameAncestors
   }),
 );
 
