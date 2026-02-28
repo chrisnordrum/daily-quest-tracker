@@ -88,5 +88,5 @@ For temporary server errors, the <code>no-cache</code> caching policy is set to 
 
 - **Fetch API Data** 
     - When fetching data from an API, never assume that the request will succeed. The server can always return an error status (e.g., 404 or 500). So ensure that the app handles error gracefully.
-    - Using ``UseEffect`` runs API requests when the component first loads. The UI renders before the data is returned, so setting a safe initial state (an empty array) is important to prevent errors when hnadling asynchronous data.
+    - Using ``UseEffect`` runs API requests when the component first loads. The UI renders before the data is returned, so setting a safe initial state (an empty array) is important to prevent errors when handling asynchronous data.
     - Adding loading states helped improve UX by giving feedback while data is being fetched.
