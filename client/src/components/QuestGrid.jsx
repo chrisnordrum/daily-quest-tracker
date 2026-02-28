@@ -15,13 +15,11 @@ const Quest = ({ limit }) => {
   const displayedQuests = limit ? data.slice(0, limit) : data;
 
   return (
-    <section>
       <div className="grid grid-cols-[repeat(auto-fit,_minmax(280px,_1fr))] gap-6">
         {displayedQuests.map((quest) => (
           <QuestCard key={quest.id} quest={quest} />
         ))}
       </div>
-    </section>
   );
 };
 
