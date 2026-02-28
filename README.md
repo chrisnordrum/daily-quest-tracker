@@ -86,6 +86,8 @@ For temporary server errors, the <code>no-cache</code> caching policy is set to 
 
 - **Implementing HTTPS** - Perhaps the hardest part about implementing HTTPS into the site was configuring it to be compatible with it in the first place. The server's VITE system required reconfiguring to properly feed the right files from the server.
 
+- **Setting Up Helmet** - Helmet is very easy to use and their default security headers are standard in securing a web application. In addition to security headers, we learned that the middleware can also handle the HSTS policy for HTTPS and allowed us to remove the HSTS dependancy and streamline our code.
+
 - **Fetch API Data** 
     - When fetching data from an API, never assume that the request will succeed. The server can always return an error status (e.g., 404 or 500). So ensure that the app handles error gracefully.
     - Using ``UseEffect`` runs API requests when the component first loads. The UI renders before the data is returned, so setting a safe initial state (an empty array) is important to prevent errors when handling asynchronous data.
