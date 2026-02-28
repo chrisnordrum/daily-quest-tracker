@@ -8,6 +8,9 @@ const https = require("https");
 const PORT = process.env.PORT || 5050;
 const app = express();
 
+// Middleware
+app.use(express.json());
+
 // Security headers
 app.use(
   helmet({
