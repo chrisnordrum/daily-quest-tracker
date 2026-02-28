@@ -81,35 +81,48 @@ From a security perspective, these assets contain no sensitive or user-specific 
 
 Caching headers are defined in the controllers so that cache behaviour can be tailored to the specific data and purpose of each endpoint. This approach keeps the logic organized and makes future updates or version upgrades easier to manage without creating confusion.
 
-1. questsController: Get all quests
-   Handles GET requests to fetch all quests from the database.
+#### 1. `questsController` – Get all quests
 
-- Reasons for not caching this response:
-  The quests are dynamic and change based on the user's progress.
+Handles GET requests to fetch all quests from the database.
 
-2. ranksController: Get all ranks
-   Handles GET requests to fetch all ranks from the database.
+- **Caching**: Not cached
+- **Reason**: The quests are dynamic and change based on the user's progress.
 
-- Reasons for not caching this response:
-  The ranks are dynamic and change based on the user's progress.
+---
 
-3. usersController: Get all users
-   Handles GET requests to fetch all users from the database.
+##### 2. `ranksController` – Get all ranks
 
-- Reasons for not caching this response:
-  The content of users is sensitive and should not be cached.
+Handles GET requests to fetch all ranks from the database.
 
-4. badgesController: Get all badges
-   Handles GET requests to fetch all badges from the database.
+- **Caching**: Not cached
+- **Reason**: The ranks are dynamic and change based on the user's progress.
 
-- Reasons for caching the response for 1 month:
-  The content is static and does not change frequently.
+---
 
-5. Controller: Get daily quotes
-   Handles GET requests to fetch daily quotes from the database.
+#### 3. `usersController` – Get all users
 
-- Reasons for not caching this response:
-  Allows immediate updates if any inappropriate content needs to be changed or removed.
+Handles GET requests to fetch all users from the database.
+
+- **Caching**: Not cached
+- **Reason**: The content of users is sensitive and should not be cached.
+
+---
+
+#### 4. `badgesController` – Get all badges
+
+Handles GET requests to fetch all badges from the database.
+
+- **Caching**: Cached for 1 month
+- **Reason**: The content is static and does not change frequently.
+
+---
+
+#### 5. `dailyQuotesController` – Get daily quotes
+
+Handles GET requests to fetch daily quotes from the database.
+
+- **Caching**: Not cached
+- **Reason**: Allows immediate updates if any inappropriate content needs to be changed or removed.
 
 ### SPA Fallback
 
