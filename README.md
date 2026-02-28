@@ -12,7 +12,7 @@ Make sure you have Node.js installed on your device.
 
 1. Clone the repository
 ```
-git clone https://github.com/chrisnordrum/daily-quest-tracker.git
+git clone https://github.com/chrisnordrum/dorc-app.git
 ```
 
 2. Go to the project directory within the terminal to install the dependencies:
