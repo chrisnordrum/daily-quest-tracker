@@ -79,35 +79,40 @@ From a security perspective, these assets contain no sensitive or user-specific 
 
 ### API Routes
 
-Caching headers are defined in the controllers so that cache behavior can be tailored to the specific data and purpose of each endpoint. This approach keeps the logic organized and makes future updates or version upgrades easier to manage without creating confusion.
+Caching headers are defined in the controllers so that cache behaviour can be tailored to the specific data and purpose of each endpoint. This approach keeps the logic organized and makes future updates or version upgrades easier to manage without creating confusion.
 
-1. Controller: Get all quests
+1. questsController: Get all quests
    Handles GET requests to fetch all quests from the database.
-   Reasons for not caching this response:
+
+Reasons for not caching this response:
 
 - The quests are dynamic and change based on the user's progress.
 
-2. Controller: Get all ranks
+2. ranksController: Get all ranks
    Handles GET requests to fetch all ranks from the database.
-   Reasons for not caching this response:
+
+Reasons for not caching this response:
 
 - The ranks are dynamic and change based on the user's progress.
 
-3. Controller: Get all users
+3. usersController: Get all users
    Handles GET requests to fetch all users from the database.
-   Reasons for not caching this response:
+
+Reasons for not caching this response:
 
 - The content of users is sensitive and should not be cached.
 
-4. Controller: Get all badges
+4. badgesController: Get all badges
    Handles GET requests to fetch all badges from the database.
-   Reasons for caching the response for 1 month:
+
+Reasons for caching the response for 1 month:
 
 - The content is static and does not change frequently.
 
 5. Controller: Get daily quotes
    Handles GET requests to fetch daily quotes from the database.
-   Reasons for not caching this response:
+
+Reasons for not caching this response:
 
 - Allows immediate updates if any inappropriate content needs to be changed or removed.
 
