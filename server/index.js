@@ -8,6 +8,9 @@ const hsts = require("hsts");
 const PORT = process.env.PORT || 5050;
 const app = express();
 
+// Middleware
+app.use(express.json());
+
 // Security headers
 const helmet = require("helmet");
 app.use(
