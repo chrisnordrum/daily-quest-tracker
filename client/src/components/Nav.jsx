@@ -60,7 +60,7 @@ export default function Nav() {
       </header>
 
       {/* Mobile Navigation */}
-      <nav className="fixed bottom-1 left-0 right-0 z-50 border-2 border-border bg-bg backdrop-blur-md rounded-full sm:hidden">
+      <nav className="fixed bottom-1 left-1 right-1 z-50 border-2 border-border bg-bg backdrop-blur-md rounded-full sm:hidden">
         <ul className="flex justify-around items-center py-2 text-fg">
 
           <li>
