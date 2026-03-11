@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/chrisnordrum/daily-quest-tracker/issues"
   },
-  "homepage": "https://github.com/chrisnordrum/daily-quest-tracker#readme"
+  "homepage": "https://github.com/chrisnordrum/daily-quest-tracker#readme",
+  "dependencies": {
+    "mongoose": "^9.3.0"
+  }
 }
