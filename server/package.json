@@ -5,13 +5,14 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "node --watch --env-file=config.env index.js"
+    "dev": "node --watch --env-file=.env index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "argon2": "^0.44.0",
     "express": "^5.2.1",
     "helmet": "^8.1.0"
   }

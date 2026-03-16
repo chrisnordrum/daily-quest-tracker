@@ -4,6 +4,7 @@ const path = require("path");
 const fs = require("fs");
 const helmet = require("helmet");
 const https = require("https");
+const mongoose = require("mongoose");
 
 const PORT = process.env.PORT || 5050;
 const app = express();
@@ -50,6 +51,10 @@ app.use(
 const routes = require("./routes");
 app.use("/api", routes);
 
+// Auth routes
+const authRoutes = require("./routes/auth");
+app.use("/api/auth", authRoutes);
+
 // Serve Vite build
 const distPath = path.join(__dirname, "..", "client", "dist");
 app.use(express.static(distPath));
@@ -73,7 +78,19 @@ const options = {
   cert: fs.readFileSync("certificate.pem"), // Path to your certificate
 };
 
+// Connect to MongoDB
+async function connectToMongoDB() {
+  try {
+    await mongoose.connect(process.env.MONGODB_URI);
+    console.log("Connected to MongoDB");
+  } catch (error) {
+    console.error("Error connecting to MongoDB:", error);
+    process.exit(1);
+  }
+}
+
 // Create and start the HTTPS server
 https.createServer(options, app).listen(PORT, () => {
+  connectToMongoDB();
   console.log(`HTTPS Server running at https://localhost:${PORT}`);
 });
