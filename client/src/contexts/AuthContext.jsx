@@ -3,18 +3,18 @@ import { createContext, useContext, useState } from "react";
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState({
-    username: "og-dorc",
-    password: "supersecurepassword",
-  });
+  const [user, setUser] = useState(null);
 
-  const register = async (username, password) => {
+  const register = async (username, password, firstName, lastName, email) => {
     const res = await fetch("/api/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         username,
         password,
+        first_name: firstName,
+        last_name: lastName,
+        email,
       }),
     });
 

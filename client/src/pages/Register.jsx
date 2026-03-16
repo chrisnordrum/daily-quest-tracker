@@ -4,7 +4,10 @@ import { useAuth } from "../contexts/AuthContext";
 
 export default function Register() {
   // Form input states
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   // Form status states
@@ -26,16 +29,16 @@ export default function Register() {
       setLoading(true);
 
       // Pass the form data to the register function
-      await register(username, password);
+      await register(username, password, firstName, lastName, email);
 
       setSuccess(true);
 
       // Redirect to Quest page
       navigate("/quest");
     } catch (error) {
-      //setError(error.message);
+      setError(error.message);
       console.error(error.message); // remove this later
-      setError("Registration is not connected yet"); // just for now
+      // setError("Registration is not connected yet"); // just for now
     } finally {
       setLoading(false);
     }
@@ -74,15 +77,25 @@ export default function Register() {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
-                <label className="sr-only">First Name</label>
+                <label htmlFor="firstName" className="sr-only">
+                  First Name
+                </label>
                 <input
+                  id="firstName"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
                   type="text"
                   placeholder="First Name"
                   className="p-3 rounded-full bg-bg border border-border text-fg w-full outline-none focus:ring-2 focus:ring-accent/30"
                 />
 
-                <label className="sr-only">Last Name</label>
+                <label htmlFor="lastName" className="sr-only">
+                  Last Name
+                </label>
                 <input
+                  id="lastName"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
                   type="text"
                   placeholder="Last Name"
                   className="p-3 rounded-full bg-bg border border-border text-fg w-full outline-none focus:ring-2 focus:ring-accent/30"
@@ -99,6 +112,9 @@ export default function Register() {
               />
 
               <input
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 type="email"
                 placeholder="Email"
                 className="p-3 rounded-full bg-bg border border-border text-fg outline-none focus:ring-2 focus:ring-primary/30"
