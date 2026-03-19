@@ -27,9 +27,26 @@ export function AuthProvider({ children }) {
     setUser(data.user);
   };
 
+  const login = async (username, password) => {
+    const res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message || "Error signing in");
+    }
+
+    setUser(data.user);
+  };
+
   const values = {
     user,
     register,
+    login
   };
 
   return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>;
