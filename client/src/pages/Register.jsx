@@ -1,22 +1,20 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import googleIcon from "../assets/images/google.svg";
 
 export default function Register() {
-  // Form input states
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  // Form status states
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-
   const { register } = useAuth();
 
   const handleSubmit = async (e) => {
@@ -27,21 +25,19 @@ export default function Register() {
 
     try {
       setLoading(true);
-
-      // Pass the form data to the register function
       await register(username, password, firstName, lastName, email);
-
       setSuccess(true);
-
-      // Redirect to Quest page
       navigate("/quest");
     } catch (error) {
       setError(error.message);
-      console.error(error.message); // remove this later
-      // setError("Registration is not connected yet"); // just for now
+      console.error(error.message);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleGoogleSignup = () => {
+    alert("Google sign up clicked");
   };
 
   return (
@@ -77,9 +73,6 @@ export default function Register() {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
-                <label htmlFor="firstName" className="sr-only">
-                  First Name
-                </label>
                 <input
                   id="firstName"
                   value={firstName}
@@ -89,9 +82,6 @@ export default function Register() {
                   className="p-3 rounded-full bg-bg border border-border text-fg w-full outline-none focus:ring-2 focus:ring-accent/30"
                 />
 
-                <label htmlFor="lastName" className="sr-only">
-                  Last Name
-                </label>
                 <input
                   id="lastName"
                   value={lastName}
@@ -132,7 +122,7 @@ export default function Register() {
               <button
                 disabled={loading}
                 type="submit"
-                className="bg-accent text-white p-3 px-7 rounded-full font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition mt-2"
+                className="bg-accent text-white p-3 px-7 rounded-full font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition"
               >
                 {loading ? "Creating Account..." : "Register"}
               </button>
@@ -142,11 +132,24 @@ export default function Register() {
                   Account created successfully
                 </span>
               )}
+
               {error && (
                 <span className="text-sm text-center text-red-500">
                   {error}
                 </span>
               )}
+              <div>
+                <p className="text-center">or</p>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleGoogleSignup}
+                className="w-full flex items-center justify-center gap-3 p-3 rounded-full border border-border bg-white text-gray-700 font-medium hover:bg-gray-50 transition"
+              >
+                <img src={googleIcon} alt="Google" className="w-5 h-5" />
+                Sign up with Google
+              </button>
 
               <p className="text-sm text-center text-fg/70 mt-2">
                 Already have an account?{" "}
