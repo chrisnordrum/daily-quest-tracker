@@ -9,7 +9,7 @@ import {
 } from "react-icons/ri";
 
 export default function Nav() {
-  const { user, logout } = useAuth();
+  const { loggedIn, logout } = useAuth();
 
   return (
     <>
@@ -56,10 +56,19 @@ export default function Nav() {
               </Link>
             </li>
 
-            {user && (
-              <li>
-                <button onClick={logout}>Sign Out</button>
-              </li>
+            {loggedIn && (
+              <button className="p-2
+                bg-accent text-white
+                text-sm
+                sm:w-fit
+                rounded-full
+                transition duration-200 ease-in-out
+                hover:bg-primary
+                dark:bg-accent
+                dark:hover:bg-card
+                dark:hover:border-accent
+                dark:hover:text-fg" 
+                onClick={logout}>Sign Out</button>
             )}
           </ul>
 
