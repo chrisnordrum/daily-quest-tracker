@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 // Middleware to authenticate users based on their token
 const authMiddleware = (req, res, next) => {
   // Get the token from the request header
-  const token = req.header.token;
+  const token = req.headers.token;
   // If the token is not present, return a 401 error
   if (!token) {
     return res.status(401).json({ message: "No token, authorization denied" });
