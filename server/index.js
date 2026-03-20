@@ -23,6 +23,9 @@ app.use(
         defaultSrc: ["'self'"],
         fontSrc: ["'self'"], // Only load fonts from self
         frameAncestors: ["'none'"], // The document cannot be loaded in any frame => to avoid clickjacking attacks
+        imgSrc: ["'self'", "data:"],
+        scriptSrc: ["'self'"],
+        styleSrc: ["'self'", "https:", "'unsafe-inline'"], // This is Helmet.js' default setting, will need adjusting
       },
     },
     xFrameOptions: { action: "deny" }, // Legacy fallback for CSP: frameAncestors
