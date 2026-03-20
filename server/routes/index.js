@@ -7,11 +7,13 @@ const questsRoutes = require("./questsRoutes");
 const ranksRoutes = require("./ranksRoutes");
 const badgesRoutes = require("./badgesRoutes");
 const dailyQuotesRoutes = require("./dailyQuotesRoutes");
+const authRoutes = require("./authRoutes");
 
 router.use("/users", usersRoutes);
 router.use("/quests", questsRoutes);
 router.use("/ranks", ranksRoutes);
 router.use("/badges", badgesRoutes);
 router.use("/dailyQuotes", dailyQuotesRoutes);
+router.use("/auth", authRoutes);
 
 module.exports = router;
