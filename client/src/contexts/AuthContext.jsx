@@ -1,10 +1,18 @@
 import { createContext, useContext, useState } from "react";
+import { useLocalStorage } from "../hooks/useLocalStorage";
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const loggedIn = !!user;
+  const [token, setToken] = useState(localStorage.getItem("token") || "");
+  const [user, setUser] = useState(() => {
+    const storedUser = localStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
+
+  const { setItems, removeItems } = useLocalStorage();
+
+  const loggedIn = !!token;
 
   const register = async (username, password, firstName, lastName, email) => {
     const res = await fetch("/api/auth/register", {
@@ -25,6 +33,8 @@ export function AuthProvider({ children }) {
       throw new Error(data.message || "Error creating user");
     }
 
+    setItems(data.token, data.user);
+    setToken(data.token);
     setUser(data.user);
   };
 
@@ -32,7 +42,7 @@ export function AuthProvider({ children }) {
     const res = await fetch("/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password })
+      body: JSON.stringify({ username, password }),
     });
 
     const data = await res.json();
@@ -41,19 +51,23 @@ export function AuthProvider({ children }) {
       throw new Error(data.message || "Error signing in");
     }
 
+    setItems(data.token, data.user);
+    setToken(data.token);
     setUser(data.user);
   };
 
   const logout = () => {
+    removeItems();
+    setToken("");
     setUser(null);
-  }
+  };
 
   const values = {
     user,
     loggedIn,
     register,
     login,
-    logout
+    logout,
   };
 
   return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>;
