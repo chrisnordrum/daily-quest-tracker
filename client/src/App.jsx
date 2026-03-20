@@ -41,13 +41,13 @@ function App() {
         <Route index element={<Home />} />
         <Route path="/quest" element={<Quest />} />
         <Route path="/guild" element={<Guild />} />
-        <Route path="/leaderboard" element={<Leaderboard />} />
         <Route element={<PublicRoute />}>
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
         </Route>
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/profile" element={<Profile />} />
         </Route>
         <Route path="*" element={<NotFound />} />
