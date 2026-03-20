@@ -1,0 +1,14 @@
+import { Navigate, Outlet } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+
+export default function PublicRoute({ children }) {
+    const { loggedIn } = useAuth();
+
+    // Redirect authenticated users away from public routes
+    if (loggedIn) {
+        return <Navigate to="/dashboard" replace />;
+    }
+
+    // Allow access to unauthenticated users
+    return children ? <>{children}</> : <Outlet />;
+}

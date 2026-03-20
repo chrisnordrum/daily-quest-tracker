@@ -4,7 +4,7 @@ const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [loggedIn, setLoggedIn] = useState(false);
+  const loggedIn = !!user;
 
   const register = async (username, password, firstName, lastName, email) => {
     const res = await fetch("/api/auth/register", {
@@ -26,7 +26,6 @@ export function AuthProvider({ children }) {
     }
 
     setUser(data.user);
-    setLoggedIn(true);
   };
 
   const login = async (username, password) => {
@@ -43,12 +42,10 @@ export function AuthProvider({ children }) {
     }
 
     setUser(data.user);
-    setLoggedIn(true);
   };
 
   const logout = () => {
     setUser(null);
-    setLoggedIn(false);
   }
 
   const values = {

@@ -1,14 +1,17 @@
+import { useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
+import PublicRoute from "./routes/PublicRoute.jsx";
+import ProtectedRoute from "./routes/ProtectedRoute.jsx";
 import Home from "./pages/Home.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import Nav from "./components/Nav.jsx";
 import Guild from "./pages/Guild";
 import Leaderboard from "./pages/Leaderboard";
 import Quest from "./pages/Quest.jsx";
-import { useEffect } from "react";
 import Profile from "./pages/Profile.jsx";
 import Register from "./pages/Register.jsx";
 import Login from "./pages/Login.jsx";
+import Dashboard from "./pages/Dashboard.jsx";
 
 function App() {
   useEffect(() => {
@@ -39,9 +42,14 @@ function App() {
         <Route path="/quest" element={<Quest />} />
         <Route path="/guild" element={<Guild />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
+        <Route element={<PublicRoute />}>
+          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
+        </Route>
+        <Route element={<ProtectedRoute />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/profile" element={<Profile />} />
+        </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>
