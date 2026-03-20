@@ -63,11 +63,14 @@ export default function Nav() {
                 sm:w-fit
                 rounded-full
                 transition duration-200 ease-in-out
+                border border-transparent
                 hover:bg-primary
                 dark:bg-accent
                 dark:hover:bg-card
                 dark:hover:border-accent
-                dark:hover:text-fg" 
+                dark:hover:text-fg
+                dark:hover:border-white"
+                
                 onClick={logout}>Sign Out</button>
             )}
           </ul>
