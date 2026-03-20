@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 import {
   RiHomeFill,
   RiCompass3Fill,
@@ -8,6 +9,8 @@ import {
 } from "react-icons/ri";
 
 export default function Nav() {
+  const { user, logout } = useAuth();
+
   return (
     <>
       <header className="sticky top-0 z-50 w-full bg-bg text-fg border-b-2 border-border">
@@ -53,6 +56,11 @@ export default function Nav() {
               </Link>
             </li>
 
+            {user && (
+              <li>
+                <button onClick={logout}>Sign Out</button>
+              </li>
+            )}
           </ul>
 
           <div className="flex-1 sm:hidden" />
