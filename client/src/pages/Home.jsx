@@ -54,7 +54,7 @@ export default function Home() {
             </h2>
             
             <button
-                className="px-4 py-2 bg-accent text-white sm:w-fit rounded-full transition duration-200 ease-in-out hover:bg-primary dark:bg-accent dark:hover:bg-card dark:hover:border-accent dark:hover:text-fg">
+                className="px-4 py-2 bg-accent text-white sm:w-fit rounded-full transition duration-200 ease-in-out border border-transparent hover:bg-primary dark:bg-accent dark:hover:bg-card dark:hover:border-white dark:hover:text-fg">
                 Add Quests
             </button>
             </section>
