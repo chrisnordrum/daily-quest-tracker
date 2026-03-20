@@ -46,7 +46,7 @@ MONGODB_URI=mongodb+srv://<username>:<db_password>@cluster0.ifhq3qs.mongodb.net/
 3. **Make sure** to change the value of `JWT_SECRET` with your own secret key
 
 ```
-JWT_SECRET=0NEP1ECE 
+JWT_SECRET=0NEP1ECE
 ```
 
 > Just in case Oda finally reveals the One Piece!
