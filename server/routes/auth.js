@@ -34,8 +34,29 @@ router.post("/register", async (req, res) => {
     });
     //save the user to the database
     await newUser.save();
+
+    //create a token
+    const token = jwt.sign(
+      {
+        id: newUser._id,
+        role: newUser.role,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "24h" },
+    );
     //return the user
-    res.status(201).json({ message: `${username} created successfully` });
+    res.status(201).json({
+      message: `${username} created successfully`,
+      token,
+      user: {
+        id: newUser._id,
+        role: newUser.role,
+        username: newUser.username,
+        email: newUser.email,
+        first_name: newUser.first_name,
+        last_name: newUser.last_name,
+      },
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
