@@ -55,10 +55,6 @@ app.use(
 const routes = require("./routes");
 app.use("/api", routes);
 
-// Auth routes
-const authRoutes = require("./routes/auth");
-app.use("/api/auth", authRoutes);
-
 // Serve Vite build
 const distPath = path.join(__dirname, "..", "client", "dist");
 app.use(express.static(distPath));
