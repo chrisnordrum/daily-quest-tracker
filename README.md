@@ -8,7 +8,8 @@ DORC is a MERN stack RPG-style productivity app that turns habit-building into a
 
 ### Prerequisites
 
-Make sure you have Node.js installed on your device.
+- Make sure you have [Node.js](https://nodejs.org/en) installed on your device.
+- Make sure you have a [MongoDB](https://www.mongodb.com/) database set up (MongoDB Atlas or local MongoDB).
 
 ### Installation
 
@@ -27,11 +28,28 @@ cd ../client
 npm install
 ```
 
-3. Within the `server` directory, create a `.env` file and copy the environment variables as shown in the `.env.example` file
+### Environment
+
+1. Go to the `server` directory, create a `.env` file and copy the environment variables as shown in the `.env.example` file
 
 ```
+cd server
 cp .env.example .env
 ```
+
+2. Inside the `.env` file, make sure to change the value of `MONGODB_URI` to your own [MongoDB Atlas](https://www.mongodb.com/products/platform) connection string using the `Mongoose` driver
+
+```
+MONGODB_URI=mongodb+srv://<username>:<db_password>@cluster0.ifhq3qs.mongodb.net/?appName=Cluster0
+```
+
+3. **Make sure** to change the value of `JWT_SECRET` with your own secret key
+
+```
+JWT_SECRET=0NEP1ECE 
+```
+
+> Just in case Oda finally reveals the One Piece!
 
 ### Development
 
