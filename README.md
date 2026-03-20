@@ -27,10 +27,10 @@ cd ../client
 npm install
 ```
 
-3. Within the <code>server</code> directory, create a <code>config.env</code> file and copy the environment variables as shown in the <code>config.env.example</code> file
+3. Within the `server` directory, create a `.env` file and copy the environment variables as shown in the `.env.example` file
 
 ```
-cp config.env.example config.env
+cp .env.example .env
 ```
 
 ### Development
@@ -50,6 +50,8 @@ npm run dev
 
 3. Open [http://localhost:5173](http://localhost:5173) in your browser during development (changes to React files appear instantly due to Hot Module Replacement (HMR))
 
+---
+
 ## SSL Configuration
 
 ### SSL Certificate
@@ -60,11 +62,13 @@ We opted for a self-signed OpenSSL certificate as it was the easiest method at t
 
 We used the [Helmet](https://helmetjs.github.io/) middleware to set HTTP response headers for the app.
 
-- We set the <code>frame-ancestors</code> within the Content Security Policy header to <code>'none'</code> and legacy X-Frame-Options header to <code>{ action: "deny" }</code> to reject all frame embedding since we won't be using frames within our app.
-- We set the <code>font-src</code> within the Content Security Policy header to <code>'self'</code> to reject all external fonts because we have fonts saved in our client directory and do not need to import any external fonts.
+- We set the `frame-ancestors` within the Content Security Policy header to `'none'` and legacy X-Frame-Options header to `{ action: "deny" }` to reject all frame embedding since we won't be using frames within our app.
+- We set the `font-src` within the Content Security Policy header to `'self'` to reject all external fonts because we have fonts saved in our client directory and do not need to import any external fonts.
 - The rest of the headers are set by default by the [Helmet](https://helmetjs.github.io/) middleware and are standard in securing web applications and also align with our project.
 
 The next step for security headers is to incorporate nonces for script and style sources to only allow the user to load intended resources.
+
+---
 
 ## Caching Strategies
 
@@ -128,7 +132,7 @@ Handles GET requests to fetch daily quotes from the database.
 
 This route ensures any client-side route is handled by the client. The SPA Fallback replaces the server-side 404 error by serving the application shell.
 
-The caching policy chosen for this route is <code>no-cache</code> to ensure the user is always served the latest build.
+The caching policy chosen for this route is `no-cache` to ensure the user is always served the latest build.
 
 ### Vite and React Build
 
@@ -136,9 +140,21 @@ All client-side routing is handled by [React Router](https://reactrouter.com/) i
 
 ### 500 Error
 
-For temporary server errors, the <code>no-cache</code> caching policy is set to ensure temporary server errors are not stored and cannot be potentially exploited.
+For temporary server errors, the `no-cache` caching policy is set to ensure temporary server errors are not stored and cannot be potentially exploited.
+
+---
+
+## Authentication Mechanisms
+
+---
+
+## Role-Based Access Control
+
+---
 
 ## Lessons Learned
+
+### Establishing a Secure HTTPS Server
 
 - **Implementing HTTPS** - Perhaps the hardest part about implementing HTTPS into the site was configuring it to be compatible with it in the first place. The server's VITE system required reconfiguring to properly feed the right files from the server.
 
@@ -148,3 +164,5 @@ For temporary server errors, the <code>no-cache</code> caching policy is set to 
   - When fetching data from an API, never assume that the request will succeed. The server can always return an error status (e.g., 404 or 500). So ensure that the app handles error gracefully.
   - Using `UseEffect` runs API requests when the component first loads. The UI renders before the data is returned, so setting a safe initial state (an empty array) is important to prevent errors when handling asynchronous data.
   - Adding loading states helped improve UX by giving feedback while data is being fetched.
+
+### Authentication and Authorization Mechanisms
