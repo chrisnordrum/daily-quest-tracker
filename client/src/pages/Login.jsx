@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import googleIcon from "../assets/images/google.svg";
 
 export default function Login() {
   // Form input states
@@ -15,6 +16,11 @@ export default function Login() {
   const navigate = useNavigate();
 
   const { login } = useAuth();
+
+  const handleGoogleLogin = () => {
+    alert("Google login clicked");
+  };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -52,11 +58,10 @@ export default function Login() {
           />
           <div className="absolute inset-0 bg-black/45 flex flex-col justify-end p-6 md:p-10 text-white">
             <h2 className="text-3xl md:text-4xl font-bold mb-3">
-              Ready to be a DORC?
+              Welcome back, DORC.
             </h2>
             <p className="text-sm md:text-base text-white/90 max-w-sm">
-              Join our community today and create your account in just a few
-              steps.
+              Your fellow DORCs have been waiting for you! Sign in to track your quests and conquer your day.
             </p>
           </div>
         </div>
@@ -109,6 +114,19 @@ export default function Login() {
                   {error}
                 </span>
               )}
+
+               <div>
+                  <p className="text-center">or</p>
+               </div>
+              
+               <button
+                  type="button"
+                  onClick={handleGoogleLogin}
+                  className="w-full flex items-center justify-center gap-3 p-3 rounded-full border border-border bg-white text-gray-700 font-medium hover:bg-gray-50 transition"
+                >
+                  <img src={googleIcon} alt="Google" className="w-5 h-5" />
+                  Sign in with Google
+                </button>
 
               <p className="text-sm text-center text-fg/70 mt-2">
                 Don't have an account?{" "}
