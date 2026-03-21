@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useAuthFetch } from "../hooks/useAuthFetch";
 import { RiSearchLine, RiArrowDownSLine } from "react-icons/ri";
 
 export default function Admin() {
@@ -8,38 +9,35 @@ export default function Admin() {
   const [searchTerm, setSearchTerm] = useState("");
   const [roleFilter, setRoleFilter] = useState("");
 
+  const authFetch = useAuthFetch();
+
   useEffect(() => {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      setError("No token found. Please log in again.");
-      return;
-    }
-
-    fetch("/api/admin", {
-      headers: { token },
-    })
-      .then(async (res) => {
+    const fetchAdmin = async () => {
+      try {
+        const res = await authFetch("/api/admin");
         const data = await res.json();
+
         if (!res.ok) throw new Error(data.message || "Access denied");
         setMessage(data.message);
-      })
-      .catch((err) => setError(err.message));
 
-    fetch("/api/admin/users", {
-      headers: { token },
-    })
-      .then(async (res) => {
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message || "Failed to load users");
-        setUsers(data);
-      })
-      .catch((err) => setError(err.message));
-  }, []);
+        const usersRes = await authFetch("/api/admin/users");
+        const usersData = await res.json();
+
+        if (!usersRes.ok)
+          throw new Error(usersData.message || "Failed to load users");
+        setUsers(usersData);
+      } catch (error) {
+        setError(error.message || "");
+      }
+    };
+
+    fetchAdmin();
+  }, [authFetch]);
 
   const filteredUsers = useMemo(() => {
     return users.filter((user) => {
-      const fullName = `${user.first_name || ""} ${user.last_name || ""}`.toLowerCase();
+      const fullName =
+        `${user.first_name || ""} ${user.last_name || ""}`.toLowerCase();
       const username = user.username?.toLowerCase() || "";
       const email = user.email?.toLowerCase() || "";
       const role = user.role?.toLowerCase() || "";
@@ -50,7 +48,8 @@ export default function Admin() {
         username.includes(search) ||
         email.includes(search);
 
-      const matchesRole = roleFilter === "" || role === roleFilter.toLowerCase();
+      const matchesRole =
+        roleFilter === "" || role === roleFilter.toLowerCase();
 
       return matchesSearch && matchesRole;
     });
@@ -76,9 +75,11 @@ export default function Admin() {
         </div>
 
         <div className="grid gap-4 md:grid-cols-[8fr,2fr] mb-6">
-
           <div className="relative">
-            <label htmlFor="userSearch" className="block text-sm font-medium text-fg mb-2">
+            <label
+              htmlFor="userSearch"
+              className="block text-sm font-medium text-fg mb-2"
+            >
               Search Users
             </label>
             <input
@@ -90,11 +91,17 @@ export default function Admin() {
               placeholder="Search by name, username, or email..."
             />
 
-            <RiSearchLine size={25} className="absolute left-3 top-9 text-border" />
+            <RiSearchLine
+              size={25}
+              className="absolute left-3 top-9 text-border"
+            />
           </div>
 
           <div className="relative">
-            <label htmlFor="roleFilter" className="block text-sm font-medium text-fg mb-2">
+            <label
+              htmlFor="roleFilter"
+              className="block text-sm font-medium text-fg mb-2"
+            >
               Filter by Role
             </label>
             <select
@@ -107,7 +114,10 @@ export default function Admin() {
               <option value="admin">Admin</option>
               <option value="user">User</option>
             </select>
-            <RiArrowDownSLine size={25} className="absolute right-3 top-9 text-border" />
+            <RiArrowDownSLine
+              size={25}
+              className="absolute right-3 top-9 text-border"
+            />
           </div>
         </div>
 
