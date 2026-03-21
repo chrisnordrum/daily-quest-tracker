@@ -65,7 +65,7 @@ REFRESH_TOKEN_SECRET=P1ECE
 
 > We generated secure token secrets using OpenSSL
 > ```bash
-> openssl rand -hex 32
+> openssl rand -hex 64
 > ```
 
 ### SSL Configuration
