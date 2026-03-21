@@ -164,6 +164,18 @@ For temporary server errors, the `no-cache` caching policy is set to ensure temp
 
 ## Authentication Mechanisms
 
+### Local Authentication
+
+Why did we choose this? Document your reasoning in a short paragraph, noting any past experiences or expectations that influenced your decision.
+
+### SSO Authentication
+
+Why did we choose this? Document your reasoning in a short paragraph, noting any past experiences or expectations that influenced your decision.
+
+### Token Storage and Management
+
+Why did you choose your specific token storage and management strategies? Document any challenges you faced in balancing security with user experience. Reflect on the trade-offs and security measures involved.
+
 ---
 
 ## Role-Based Access Control
