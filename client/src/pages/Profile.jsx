@@ -19,7 +19,7 @@ export default function Profile() {
                     <>
                         <div className="mb-6">
                             <h1 className="text-left text-fg">Profile</h1>
-                            <p className="text-sm font-light text-fg/80">
+                            <p className="font-light text-fg/80">
                                 Manage your profile and update your personal information here.
                             </p>
                         </div>
