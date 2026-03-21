@@ -2,6 +2,20 @@
 
 DORC is a MERN stack RPG-style productivity app that turns habit-building into a game. Users create personal quests (habits or goals), earn XP for completing them, level up, unlock badges, and join guilds with friends to share progress and stay motivated.
 
+<div style="display: flex; flex-wrap: wrap; gap: 8px;">
+  <img src="https://img.shields.io/badge/-MongoDB-002548?style=for-the-badge&logo=mongodb&logoColor=white" />
+  <img src="https://img.shields.io/badge/-Express-002548?style=for-the-badge&logo=express&logoColor=white" />
+  <img src="https://img.shields.io/badge/-React-002548?style=for-the-badge&logo=react&logoColor=61DAFB" />
+  <img src="https://img.shields.io/badge/-Node.js-002548?style=for-the-badge" />
+
+  <img src="https://img.shields.io/badge/-JavaScript-002548?style=for-the-badge&logo=javascript&logoColor=F7DF1E" />
+  <img src="https://img.shields.io/badge/-Vite-002548?style=for-the-badge&logo=vite&logoColor=white" />
+  <img src="https://img.shields.io/badge/-TailwindCSS-002548?style=for-the-badge&logo=tailwindcss&logoColor=38B2AC" />
+  <img src="https://img.shields.io/badge/-JWT-002548?style=for-the-badge&logo=jsonwebtokens&logoColor=white" />
+  <img src="https://img.shields.io/badge/-Helmet-002548?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/-HTTPS-002548?style=for-the-badge&logo=google-chrome&logoColor=white" />
+</div>
+
 ---
 
 ## Setup Instructions
@@ -168,19 +182,109 @@ For temporary server errors, the `no-cache` caching policy is set to ensure temp
 
 ## Role-Based Access Control
 
+**DORC** uses a simple role-based access control system with two roles: **User** and **Admin**. This allows us to protect sensitive routes while keeping the permissions system easy to manage.
+
+We enforce access control on both the **frontend** and **backend**. On the frontend, protected routes are only available to logged-in users. On the backend, middleware verifies both authentication and user role before allowing access to sensitive resources.
+
+### Frontend Route Protection
+Protected pages are wrapped inside a `ProtectedRoute` component:
+
+```jsx
+<Route element={<ProtectedRoute />}>
+  <Route path="/leaderboard" element={<Leaderboard />} />
+  <Route path="/profile" element={<Profile />} />
+  <Route path="/admin" element={<Admin />} />
+</Route>
+```
+This ensures that only authenticated users can access `/leaderboard` and `/profile`. If a user is not logged in and tries to access these routes, they are redirected to the login page. Once a user is authenticated, they are redirected to the main page instead of seeing the login page again.
+
+The `/admin` route includes an additional role check. If a non-admin user attempts to access /admin, even by manually entering the URL, they are blocked and redirected back to a default page.
+
+The admin dashboard button on `Home.jsx` is only visible to users with the **Admin** role. This ensures that regular users do not see or attempt to access admin functionality through the interface.
+
+### Backend Protection
+On the backend, access control is enforced using middleware for both **authentication** and **authorization**. This ensures security even if users try to bypass the frontend.
+
+#### Authentication (`authMiddleware`)
+- Extracts token from `req.headers.token`
+- Verifies token using `jwt.verify()`
+- Attaches decoded user data to `req.user`
+- Returns `401 Unauthorized` if: 
+  - token is missing
+  - token is invalid
+
+```jsx
+const token = req.headers.token;
+
+if (!token) {
+  return res.status(401).json({ message: "No token, authorization denied" });
+}
+
+const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+req.user = decoded;
+```
+
+#### Authorization (`authorize`)
+- Checks if `req.user` exists (user is authenticated)
+- Verifies that the user’s role matches the required role
+- Returns `403 Forbidden` if role is not allowed
+
+```jsx
+if (req.user && roles.includes(req.user.role)) {
+  next();
+} else {
+  return res.status(403).json({
+    message: "You are not authorized to access this resource"
+  });
+```
+
+#### Admin Route Protection
+Admin routes require **both** authentication and authorization:
+
+```jsx 
+router.get("/", authMiddleware, auth("admin"), (req, res) => { ... });
+
+router.get("/users", authMiddleware, auth("admin"), async (req, res) => {
+  const users = await User.find().select("-password");
+  res.status(200).json(users);
+});
+```
+- User must have a **valid JWT Token**
+- User must have the **Admin Role**
+- Non-admin users receive a `403` response 
+- Passwords are excluded using `.select("-password"`
+- Admins can **view all users (read-only)**
+  
+
 ---
 
 ## Lessons Learned
 
-### Establishing a Secure HTTPS Server
+### Phase 1: Establishing a Secure HTTPS Server
 
-- **Implementing HTTPS** - Perhaps the hardest part about implementing HTTPS into the site was configuring it to be compatible with it in the first place. The server's VITE system required reconfiguring to properly feed the right files from the server.
+#### Implementing HTTPS 
+- Perhaps the hardest part about implementing HTTPS into the site was configuring it to be compatible with it in the first place. The server's VITE system required reconfiguring to properly feed the right files from the server.
 
-- **Setting Up Helmet** - Helmet is very easy to use and their default security headers are standard in securing a web application. In addition to security headers, we learned that the middleware can also handle the HSTS policy for HTTPS and allowed us to remove the HSTS dependancy and streamline our code.
+#### Setting Up Helmet
+- Helmet is very easy to use and their default security headers are standard in securing a web application. In addition to security headers, we learned that the middleware can also handle the HSTS policy for HTTPS and allowed us to remove the HSTS dependancy and streamline our code.
 
-- **Fetch API Data**
-  - When fetching data from an API, never assume that the request will succeed. The server can always return an error status (e.g., 404 or 500). So ensure that the app handles error gracefully.
-  - Using `UseEffect` runs API requests when the component first loads. The UI renders before the data is returned, so setting a safe initial state (an empty array) is important to prevent errors when handling asynchronous data.
-  - Adding loading states helped improve UX by giving feedback while data is being fetched.
+#### Fetch API Data
+- When fetching data from an API, never assume that the request will succeed. The server can always return an error status (e.g., 404 or 500). So ensure that the app handles error gracefully.
+- Using `UseEffect` runs API requests when the component first loads. The UI renders before the data is returned, so setting a safe initial state (an empty array) is important to prevent errors when handling asynchronous data.
+- Adding loading states helped improve UX by giving feedback while data is being fetched.
 
-### Authentication and Authorization Mechanisms
+---
+
+### Phase 2: Authentication and Authorization Mechanisms
+#### Role-Based Access Control
+- **Authentication vs Authorization** - This helped us clearly see how these work together but do different things. Authentication checks if the user is logged in, while authorization controls what they can access. In our case, users could be logged in but still blocked from `/admin` if they weren’t an admin.
+- **Frontend vs Backend Security** - We realized that frontend protection is mainly for user experience, not security. Even if a route or button is hidden, users can still try to access it manually. The backend middleware is what actually enforces access control.
+- **Middleware Order** - One issue we ran into was making sure middleware runs in the correct order. `authMiddleware` has to run first so `req.user` exists before checking the role. This showed how each step depends on the previous one.
+- **Error Handling** - We handled different cases using:
+  - `401` - when the user is not authenticated (no or invalid token)
+  - `403` - when the user is authenticated but not allowed access
+  - This made debugging and testing much clearer.
+- **Role-Based UI Behavior** - The admin dashboard button in `Home.jsx` only shows for admin users. This keeps the UI clean and helps prevent regular users from trying to access admin features.
+- **Simplicity vs Flexibility** - We kept the system simple with just **User** and **Admin** roles. This made it easier to build and test, but it would need to be expanded if more detailed permissions are needed later.
+- **Main Challenge** - The biggest challenge was making sure everything worked together, not just individually. It wasn’t enough to protect routes on the frontend or backend alone. We had to make sure both layers were working together so that even if someone tried to access `/admin` directly, they would still be blocked. Getting this fully working required testing multiple scenarios and fixing small issues between frontend routing and backend checks.
+- **Testing Restricted Access** - We tested different edge cases like missing tokens, invalid tokens, and wrong roles. This helped confirm that the system properly blocks unauthorized users and only allows access where it should.
