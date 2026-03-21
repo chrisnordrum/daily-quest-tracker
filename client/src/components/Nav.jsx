@@ -18,10 +18,7 @@ export default function Nav() {
 
           <div className="flex-1 sm:hidden" />
 
-          <Link
-            to="/"
-            className="flex justify-center sm:justify-start flex-1"
-          >
+          <Link to="/" className="flex justify-center sm:justify-start flex-1">
             <img
               src="/dorc-typeface.png"
               alt="Dorc Logo"
@@ -44,34 +41,39 @@ export default function Nav() {
               </Link>
             </li>
 
-            <li>
-              <Link className="hover:text-accent transition-colors" to="/leaderboard">
-                Leaderboard
-              </Link>
-            </li>
-
-            <li>
-              <Link className="hover:text-accent transition-colors" to="/profile">
-                Profile
-              </Link>
-            </li>
-
+            {/*  when logged in */}
             {loggedIn && (
-              <button className="p-2
-                bg-accent text-white
-                text-sm
-                sm:w-fit
-                rounded-full
-                transition duration-200 ease-in-out
-                border border-transparent
-                hover:bg-primary
-                dark:bg-accent
-                dark:hover:bg-card
-                dark:hover:border-accent
-                dark:hover:text-fg
-                dark:hover:border-white"
-                
-                onClick={logout}>Sign Out</button>
+              <>
+                <li>
+                  <Link className="hover:text-accent transition-colors" to="/leaderboard">
+                    Leaderboard
+                  </Link>
+                </li>
+
+                <li>
+                  <Link className="hover:text-accent transition-colors" to="/profile">
+                    Profile
+                  </Link>
+                </li>
+              </>
+            )}
+
+            {!loggedIn ? (
+              <li>
+                <Link
+                  to="/login"
+                  className="px-4 py-2 rounded-full bg-accent text-white hover:bg-primary transition"
+                >
+                  Get Started
+                </Link>
+              </li>
+            ) : (
+              <button
+                className="p-2 bg-accent text-white text-sm rounded-full transition duration-200 hover:bg-primary"
+                onClick={logout}
+              >
+                Sign Out
+              </button>
             )}
           </ul>
 
@@ -84,39 +86,52 @@ export default function Nav() {
         <ul className="flex justify-around items-center py-2 text-fg">
 
           <li>
-            <Link to="/" className="flex flex-col items-center gap-1 hover:text-accent transition-colors">
+            <Link to="/" className="flex flex-col items-center gap-1 hover:text-accent">
               <RiHomeFill size={20} />
               <span className="text-xs">Home</span>
             </Link>
           </li>
 
           <li>
-            <Link to="/quest" className="flex flex-col items-center gap-1 hover:text-accent transition-colors">
+            <Link to="/quest" className="flex flex-col items-center gap-1 hover:text-accent">
               <RiCompass3Fill size={20} />
               <span className="text-xs">Quests</span>
             </Link>
           </li>
 
           <li>
-            <Link to="/guild" className="flex flex-col items-center gap-1 hover:text-accent transition-colors">
+            <Link to="/guild" className="flex flex-col items-center gap-1 hover:text-accent">
               <RiTeamFill size={20} />
               <span className="text-xs">Guild</span>
             </Link>
           </li>
 
-          <li>
-            <Link to="/leaderboard" className="flex flex-col items-center gap-1 hover:text-accent transition-colors">
-              <RiTrophyFill size={20} />
-              <span className="text-xs">Ranks</span>
-            </Link>
-          </li>
+          {loggedIn && (
+            <>
+              <li>
+                <Link to="/leaderboard" className="flex flex-col items-center gap-1 hover:text-accent">
+                  <RiTrophyFill size={20} />
+                  <span className="text-xs">Ranks</span>
+                </Link>
+              </li>
 
-          <li>
-            <Link to="/profile" className="flex flex-col items-center gap-1 hover:text-accent transition-colors">
-              <RiUserFill size={20} />
-              <span className="text-xs">Profile</span>
-            </Link>
-          </li>
+              <li>
+                <Link to="/profile" className="flex flex-col items-center gap-1 hover:text-accent">
+                  <RiUserFill size={20} />
+                  <span className="text-xs">Profile</span>
+                </Link>
+              </li>
+            </>
+          )}
+
+          {!loggedIn && (
+            <li>
+              <Link to="/login" className="flex flex-col items-center gap-1 hover:text-accent">
+                <RiUserFill size={20} />
+                <span className="text-xs">Login</span>
+              </Link>
+            </li>
+          )}
 
         </ul>
       </nav>
