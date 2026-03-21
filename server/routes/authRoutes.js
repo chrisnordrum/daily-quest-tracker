@@ -83,12 +83,12 @@ router.post("/login", async (req, res) => {
     //check if the user exists
     const user = await User.findOne({ username });
     if (!user) {
-      return res.status(400).json({ message: `${username} not found` });
+      return res.status(400).json({ message: "Invalid username or password" });
     }
     //check if the password is correct
     const isMatch = await argon2.verify(user.password, password);
     if (!isMatch) {
-      return res.status(400).json({ message: "Invalid password" });
+      return res.status(400).json({ message: "Invalid username or password" });
     }
     // create tokens
     const accessToken = jwt.sign(
