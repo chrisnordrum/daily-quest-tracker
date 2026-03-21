@@ -6,6 +6,7 @@ import { useAuth } from "../contexts/AuthContext";
 export default function Home() {
   const navigate = useNavigate();
   const { user, loggedIn } = useAuth();
+  
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-gradient-to-br from-primary/10 via-bg to-accent/20">
@@ -48,16 +49,29 @@ export default function Home() {
 
         {loggedIn && (
           <>
-            <section className="flex flex-col justify-center items-center min-h-[30vh]">
-              <h2 className="text-2xl font-semibold text-fg mb-3">
+            <section className="flex flex-col justify-center items-center min-h-[30vh] gap-3">
+            <h2 className="text-2xl font-semibold text-fg mb-3">
               Welcome back, {user?.username || user?.email} 👋
             </h2>
-            
-            <button
-                className="px-4 py-2 bg-accent text-white sm:w-fit rounded-full transition duration-200 ease-in-out border border-transparent hover:bg-primary dark:bg-accent dark:hover:bg-card dark:hover:border-white dark:hover:text-fg">
+
+            <div className="flex gap-3">
+              <button
+                className="px-4 py-2 bg-accent text-white rounded-full transition duration-200 hover:bg-primary"
+              >
                 Add Quests
-            </button>
-            </section>
+              </button>
+              
+              {/* ‼️ Admins only */}
+              {user?.role === "admin" && (
+                <button
+                  className="px-4 py-2 border border-accent text-accent rounded-full hover:bg-accent hover:text-white transition duration-200"
+                  onClick={() => navigate("/admin")}
+                >
+                  Admin Dashboard
+                </button>
+              )}
+            </div>
+          </section>
 
             <section className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold text-fg">Your Personal Quests</h2>
