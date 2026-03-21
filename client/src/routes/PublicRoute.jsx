@@ -2,13 +2,13 @@ import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
 export default function PublicRoute({ children }) {
-    const { loggedIn } = useAuth();
+  const { loggedIn } = useAuth();
 
-    // Redirect authenticated users away from public routes
-    if (loggedIn) {
-        return <Navigate to="/dashboard" replace />;
-    }
+  // Redirect authenticated users away from public routes
+  if (loggedIn) {
+    return <Navigate to="/" replace />;
+  }
 
-    // Allow access to unauthenticated users
-    return children ? <>{children}</> : <Outlet />;
+  // Allow access to unauthenticated users
+  return children ? <>{children}</> : <Outlet />;
 }
