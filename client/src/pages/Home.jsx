@@ -60,7 +60,7 @@ export default function Home() {
               >
                 Add Quests
               </button>
-              
+
               {/* ‼️ Admins only */}
               {user?.role === "admin" && (
                 <button
@@ -88,7 +88,7 @@ export default function Home() {
         
 
         <section className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold text-fg">Your Daily Quests</h2>
+          <h2 className="text-xl font-semibold text-fg">DORC's Quests</h2>
           <button
             className="flex items-center gap-1 text-sm text-fg hover:underline"
             onClick={() => navigate("/quest")}
