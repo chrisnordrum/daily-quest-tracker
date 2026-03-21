@@ -8,32 +8,31 @@ DORC is a MERN stack RPG-style productivity app that turns habit-building into a
 
 ### Prerequisites
 
-- Make sure you have [Node.js](https://nodejs.org/en) installed on your device.
+- Make sure you have [Node.js](https://nodejs.org/en) and [OpenSSL](https://www.openssl.org/) installed on your device.
 - Make sure you have a [MongoDB](https://www.mongodb.com/) database set up (MongoDB Atlas or local MongoDB).
 
 ### Installation
 
 1. Clone the repository
 
-```
+```bash
 git clone https://github.com/chrisnordrum/dorc-app.git
 ```
 
 2. Go to the project directory within the terminal to install the dependencies:
 
-```
+```bash
 cd server
 npm install
 cd ../client
 npm install
 ```
 
-### Environment
+### Environment Variables
 
 1. Go to the `server` directory, create a `.env` file and copy the environment variables as shown in the `.env.example` file
 
-```
-cd server
+```bash
 cp .env.example .env
 ```
 
@@ -43,26 +42,43 @@ cp .env.example .env
 MONGODB_URI=mongodb+srv://<username>:<db_password>@cluster0.ifhq3qs.mongodb.net/?appName=Cluster0
 ```
 
-3. **Make sure** to change the value of `JWT_SECRET` with your own secret key
+3. **Make sure** to change the values of `ACCESS_TOKEN_SECRET` and `REFRESH_TOKEN_SECRET` with your own secret keys ( *just in case Oda finally reveals the One Piece!* )
 
 ```
-JWT_SECRET=0NEP1ECE
+ACCESS_TOKEN_SECRET=0NE
+REFRESH_TOKEN_SECRET=P1ECE
 ```
 
-> Just in case Oda finally reveals the One Piece!
+> We generated secure token secrets using OpenSSL
+> ```bash
+> openssl rand -hex 32
+> ```
+
+### SSL Configuration
+
+1. Go to the `server` directory and generate a private key
+
+```bash
+openssl genrsa -out private-key.pem 2048
+```
+
+2. Generate a self-signed certificate
+
+```bash
+openssl req -new -x509 -key private-key.pem -out certificate.pem -days 365
+```
 
 ### Development
 
 1. Go to the project directory within the terminal to start the server
 
-```
+```bash
 npm run dev
 ```
 
-2. Open another terminal window, go to the project directory to start the client
+2. Open another terminal window, go to the `client` directory to start the client
 
-```
-cd client
+```bash
 npm run dev
 ```
 
@@ -196,3 +212,4 @@ Why did you choose your specific token storage and management strategies? Docume
   - Adding loading states helped improve UX by giving feedback while data is being fetched.
 
 ### Authentication and Authorization Mechanisms
+```
