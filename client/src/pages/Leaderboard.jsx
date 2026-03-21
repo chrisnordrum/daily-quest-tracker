@@ -1,33 +1,39 @@
 import { useEffect, useState } from "react";
+import { useAuthFetch } from "../hooks/useAuthFetch";
 
 export default function Leaderboard() {
   const [ranks, setRanks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const authFetch = useAuthFetch();
+
   useEffect(() => {
-    fetch("/api/ranks")
-      .then((res) => {
+    const fetchRanks = async () => {
+      try {
+        const res = await authFetch("/api/ranks", { method: "GET" });
+
         if (!res.ok) {
           throw new Error("Failed to fetch leaderboard");
         }
-        return res.json();
-      })
-      .then((data) => {
+
+        const data = await res.json();
+
         if (Array.isArray(data)) {
           const sorted = data.sort((a, b) => a.position - b.position);
           setRanks(sorted);
         } else {
           setRanks([]);
         }
-      })
-      .catch(() => {
+      } catch {
         setError("Could not load leaderboard.");
-      })
-      .finally(() => {
+      } finally {
         setLoading(false);
-      });
-  }, []);
+      }
+    };
+
+    fetchRanks();
+  }, [authFetch]);
 
   if (loading) return <p>Loading leaderboard...</p>;
   if (error) return <p>{error}</p>;

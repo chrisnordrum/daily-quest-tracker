@@ -27,7 +27,7 @@ export default function Register() {
       setLoading(true);
       await register(username, password, firstName, lastName, email);
       setSuccess(true);
-      navigate("/quest");
+      navigate("/");
     } catch (error) {
       setError(error.message);
       console.error(error.message);
@@ -153,7 +153,10 @@ export default function Register() {
 
               <p className="text-sm text-center text-fg/70 mt-2">
                 Already have an account?{" "}
-                <Link to="/login" className="text-accent font-medium cursor-pointer">
+                <Link
+                  to="/login"
+                  className="text-accent font-medium cursor-pointer"
+                >
                   Sign in
                 </Link>
               </p>

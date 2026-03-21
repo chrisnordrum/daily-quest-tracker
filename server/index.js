@@ -5,12 +5,14 @@ const fs = require("fs");
 const helmet = require("helmet");
 const https = require("https");
 const mongoose = require("mongoose");
+const cookieParser = require("cookie-parser");
 
 const PORT = process.env.PORT || 5050;
 const app = express();
 
 // Middleware
 app.use(express.json());
+app.use(cookieParser());
 
 // Security headers
 app.use(

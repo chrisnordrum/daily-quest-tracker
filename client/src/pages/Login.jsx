@@ -21,7 +21,6 @@ export default function Login() {
     alert("Google login clicked");
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -37,7 +36,7 @@ export default function Login() {
       setSuccess(true);
 
       // Redirect to Quest page
-      navigate("/quest");
+      navigate("/");
     } catch (error) {
       setError(error.message);
       console.error(error.message); // remove this later
@@ -61,7 +60,8 @@ export default function Login() {
               Welcome back, DORC.
             </h2>
             <p className="text-sm md:text-base text-white/90 max-w-sm">
-              Your fellow DORCs have been waiting for you! Sign in to track your quests and conquer your day.
+              Your fellow DORCs have been waiting for you! Sign in to track your
+              quests and conquer your day.
             </p>
           </div>
         </div>
@@ -115,22 +115,25 @@ export default function Login() {
                 </span>
               )}
 
-               <div>
-                  <p className="text-center">or</p>
-               </div>
-              
-               <button
-                  type="button"
-                  onClick={handleGoogleLogin}
-                  className="w-full flex items-center justify-center gap-3 p-3 rounded-full border border-border bg-white text-gray-700 font-medium hover:bg-gray-50 transition"
-                >
-                  <img src={googleIcon} alt="Google" className="w-5 h-5" />
-                  Sign in with Google
-                </button>
+              <div>
+                <p className="text-center">or</p>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleGoogleLogin}
+                className="w-full flex items-center justify-center gap-3 p-3 rounded-full border border-border bg-white text-gray-700 font-medium hover:bg-gray-50 transition"
+              >
+                <img src={googleIcon} alt="Google" className="w-5 h-5" />
+                Sign in with Google
+              </button>
 
               <p className="text-sm text-center text-fg/70 mt-2">
                 Don't have an account?{" "}
-                <Link to="/register" className="text-accent font-medium cursor-pointer">
+                <Link
+                  to="/register"
+                  className="text-accent font-medium cursor-pointer"
+                >
                   Register
                 </Link>
               </p>

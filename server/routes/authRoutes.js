@@ -35,19 +35,31 @@ router.post("/register", async (req, res) => {
     //save the user to the database
     await newUser.save();
 
-    //create a token
-    const token = jwt.sign(
+    //create tokens
+    const accessToken = jwt.sign(
       {
         id: newUser._id,
         role: newUser.role,
       },
-      process.env.JWT_SECRET,
+      process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: "10m" },
+    );
+    const refreshToken = jwt.sign(
+      { id: newUser._id },
+      process.env.REFRESH_TOKEN_SECRET,
       { expiresIn: "24h" },
     );
+    //create secure cookie with refresh token
+    res.cookie("jwt", refreshToken, {
+      httpOnly: true, // Prevents JavaScript access
+      secure: true, // Require https
+      sameSite: "strict",
+      maxAge: 1000 * 60 * 60 * 24, // 24 hours
+    });
     //return the user
     res.status(201).json({
       message: `${username} created successfully`,
-      token,
+      accessToken,
       user: {
         id: newUser._id,
         role: newUser.role,
@@ -78,21 +90,31 @@ router.post("/login", async (req, res) => {
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid password" });
     }
-    //create a token
-    const token = jwt.sign(
+    // create tokens
+    const accessToken = jwt.sign(
       {
         id: user._id,
         role: user.role,
       },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: "24h",
-      },
+      process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: "10m" },
     );
-    //return the token
+    const refreshToken = jwt.sign(
+      { id: user._id },
+      process.env.REFRESH_TOKEN_SECRET,
+      { expiresIn: "24h" },
+    );
+    //create secure cookie with refresh token
+    res.cookie("jwt", refreshToken, {
+      httpOnly: true, // Prevents JavaScript access
+      secure: true, // Require https
+      sameSite: "strict",
+      maxAge: 1000 * 60 * 60 * 24, // 24 hours
+    });
+    //return the access token
     res.status(200).json({
       message: "login successful",
-      token,
+      accessToken,
       user: {
         id: user._id,
         username: user.username,
@@ -104,6 +126,58 @@ router.post("/login", async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+});
+
+//GET request to refresh the access token
+router.get("/refresh", async (req, res) => {
+  try {
+    const cookies = req.cookies;
+
+    if (!cookies?.jwt) return res.status(401).json({ message: "Unauthorized" });
+
+    const refreshToken = cookies.jwt;
+
+    const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+
+    const user = await User.findById(decoded.id);
+    if (!user) return res.status(401).json({ message: "Unauthorized" });
+
+    //create an access token
+    const accessToken = jwt.sign(
+      {
+        id: user._id,
+        role: user.role,
+      },
+      process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: "10m" },
+    );
+    //return the access token
+    res.status(200).json({
+      message: "Token refreshed successfully",
+      accessToken,
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        first_name: user.first_name,
+        last_name: user.last_name,
+      },
+    });
+  } catch (error) {
+    return res.status(403).json({ message: "Forbidden" });
+  }
+});
+
+//POST request to logout a user
+router.post("/logout", async (req, res) => {
+  const cookies = req.cookies;
+  if (!cookies?.jwt) return res.sendStatus(204); // No content
+  res.clearCookie("jwt", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "strict",
+  });
+  res.status(200).json({ message: "Logged out successfully" });
 });
 
 module.exports = router;
