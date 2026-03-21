@@ -18,6 +18,19 @@ DORC is a MERN stack RPG-style productivity app that turns habit-building into a
 
 ---
 
+## Table of Contents
+
+- [Setup Instructions](#setup-instructions)
+- [SSL Configuration](#ssl-configuration)
+- [Caching Strategies](#caching-strategies)
+- [Authentication Mechanisms](#authentication-mechanisms)
+- [Role-Based Access Control](#role-based-access-control)
+- [Lessons Learned](#lessons-learned)
+    - [Phase 1](#phase-1-establishing-a-secure-https-server)
+    - [Phase 2](#phase-2-authentication-and-authorization-mechanisms)
+
+---
+
 ## Setup Instructions
 
 ### Prerequisites
