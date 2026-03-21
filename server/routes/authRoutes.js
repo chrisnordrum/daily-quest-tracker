@@ -158,6 +158,7 @@ router.get("/refresh", async (req, res) => {
       accessToken,
       user: {
         id: user._id,
+        role: user.role,
         username: user.username,
         email: user.email,
         first_name: user.first_name,
