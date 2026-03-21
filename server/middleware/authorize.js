@@ -1,7 +1,7 @@
 "use strict";
 
 // Middleware to authorize users based on their role
-const authorize = (...roles) => {
+const authorize = (roles) => {
    // Check if the user is authenticated and has the required role
   return (req, res, next) => {
   // Call the next middleware function
