@@ -1,22 +1,18 @@
-import { createContext, useContext, useState } from "react";
-import { useLocalStorage } from "../hooks/useLocalStorage";
+import { createContext, useContext, useState, useEffect } from "react";
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [token, setToken] = useState(localStorage.getItem("token") || "");
-  const [user, setUser] = useState(() => {
-    const storedUser = localStorage.getItem("user");
-    return storedUser ? JSON.parse(storedUser) : null;
-  });
-
-  const { setItems, removeItems } = useLocalStorage();
+  const [token, setToken] = useState("");
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const loggedIn = !!token;
 
   const register = async (username, password, firstName, lastName, email) => {
     const res = await fetch("/api/auth/register", {
       method: "POST",
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         username,
@@ -33,14 +29,14 @@ export function AuthProvider({ children }) {
       throw new Error(data.message || "Error creating user");
     }
 
-    setItems(data.token, data.user);
-    setToken(data.token);
+    setToken(data.accessToken);
     setUser(data.user);
   };
 
   const login = async (username, password) => {
     const res = await fetch("/api/auth/login", {
       method: "POST",
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password }),
     });
@@ -51,22 +47,64 @@ export function AuthProvider({ children }) {
       throw new Error(data.message || "Error signing in");
     }
 
-    setItems(data.token, data.user);
-    setToken(data.token);
+    setToken(data.accessToken);
     setUser(data.user);
   };
 
-  const logout = () => {
-    removeItems();
-    setToken("");
-    setUser(null);
+  const refresh = async () => {
+    const res = await fetch("/api/auth/refresh", {
+      method: "GET",
+      credentials: "include",
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message || "Failed to refresh token");
+    }
+
+    setToken(data.accessToken);
+    setUser(data.user);
+
+    return data.accessToken;
   };
 
+  const logout = async () => {
+    try {
+      await fetch("/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+    } finally {
+      setToken("");
+      setUser(null);
+    }
+  };
+
+  // Refresh tokens on app load
+  useEffect(() => {
+    const initAuth = async () => {
+      try {
+        await refresh();
+      } catch {
+        setToken("");
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initAuth();
+  }, []);
+
   const values = {
+    token,
     user,
+    loading,
     loggedIn,
     register,
     login,
+    refresh,
     logout,
   };
 
