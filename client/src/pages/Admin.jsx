@@ -21,7 +21,7 @@ export default function Admin() {
         setMessage(data.message);
 
         const usersRes = await authFetch("/api/admin/users");
-        const usersData = await res.json();
+        const usersData = await usersRes.json();
 
         if (!usersRes.ok)
           throw new Error(usersData.message || "Failed to load users");
