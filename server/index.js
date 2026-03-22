@@ -1,11 +1,16 @@
 "use strict";
+require("dotenv").config();
 const express = require("express");
+const session = require("express-session");
 const path = require("path");
 const fs = require("fs");
 const helmet = require("helmet");
 const https = require("https");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
+const passport = require("passport");
+require("./middleware/passport");
+const googleRoutes = require("./routes/googleRoutes");
 
 const PORT = process.env.PORT || 5050;
 const app = express();
@@ -90,6 +95,25 @@ async function connectToMongoDB() {
     process.exit(1);
   }
 }
+
+// for google
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: false,
+      httpOnly: true,
+      sameSite: "lax",
+    },
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use("/auth", googleRoutes);
 
 // Create and start the HTTPS server
 https.createServer(options, app).listen(PORT, () => {

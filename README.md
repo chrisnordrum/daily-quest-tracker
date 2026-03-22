@@ -215,9 +215,7 @@ Why did we choose this? Document your reasoning in a short paragraph, noting any
 
 ### SSO Authentication
 
-**This is Radzils part**
-
-Why did we choose this? Document your reasoning in a short paragraph, noting any past experiences or expectations that influenced your decision.
+SSO Configuration was relatively difficult, as it needed taking what we already know about it, and having to reconfigure it to match our app type. Everything is hopefully set up as it should be, though it is not currently connected to the MongoDB backend. The SSO uses Google's **OAuth 2.0 system**, as it was the most common form of SSO and the easiest to set up due to it being connected to Google, and as such didn't need to go through any other system.
 
 ### Token Storage and Management
 
