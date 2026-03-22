@@ -18,36 +18,48 @@ DORC is a MERN stack RPG-style productivity app that turns habit-building into a
 
 ---
 
+## Table of Contents
+
+- [Setup Instructions](#setup-instructions)
+- [SSL Configuration](#ssl-configuration)
+- [Caching Strategies](#caching-strategies)
+- [Authentication Mechanisms](#authentication-mechanisms)
+- [Role-Based Access Control](#role-based-access-control)
+- [Lessons Learned](#lessons-learned)
+    - [Phase 1](#phase-1-establishing-a-secure-https-server)
+    - [Phase 2](#phase-2-authentication-and-authorization-mechanisms)
+
+---
+
 ## Setup Instructions
 
 ### Prerequisites
 
-- Make sure you have [Node.js](https://nodejs.org/en) installed on your device.
+- Make sure you have [Node.js](https://nodejs.org/en) and [OpenSSL](https://www.openssl.org/) installed on your device.
 - Make sure you have a [MongoDB](https://www.mongodb.com/) database set up (MongoDB Atlas or local MongoDB).
 
 ### Installation
 
 1. Clone the repository
 
-```
+```bash
 git clone https://github.com/chrisnordrum/dorc-app.git
 ```
 
 2. Go to the project directory within the terminal to install the dependencies:
 
-```
+```bash
 cd server
 npm install
 cd ../client
 npm install
 ```
 
-### Environment
+### Environment Variables
 
 1. Go to the `server` directory, create a `.env` file and copy the environment variables as shown in the `.env.example` file
 
-```
-cd server
+```bash
 cp .env.example .env
 ```
 
@@ -57,26 +69,43 @@ cp .env.example .env
 MONGODB_URI=mongodb+srv://<username>:<db_password>@cluster0.ifhq3qs.mongodb.net/?appName=Cluster0
 ```
 
-3. **Make sure** to change the value of `JWT_SECRET` with your own secret key
+3. **Make sure** to change the values of `ACCESS_TOKEN_SECRET` and `REFRESH_TOKEN_SECRET` with your own secret keys ( *just in case Oda finally reveals the One Piece!* )
 
 ```
-JWT_SECRET=0NEP1ECE
+ACCESS_TOKEN_SECRET=0NE
+REFRESH_TOKEN_SECRET=P1ECE
 ```
 
-> Just in case Oda finally reveals the One Piece!
+> We generated secure token secrets using OpenSSL
+> ```bash
+> openssl rand -hex 64
+> ```
+
+### SSL Configuration
+
+1. Go to the `server` directory and generate a private key
+
+```bash
+openssl genrsa -out private-key.pem 2048
+```
+
+2. Generate a self-signed certificate
+
+```bash
+openssl req -new -x509 -key private-key.pem -out certificate.pem -days 365
+```
 
 ### Development
 
 1. Go to the project directory within the terminal to start the server
 
-```
+```bash
 npm run dev
 ```
 
-2. Open another terminal window, go to the project directory to start the client
+2. Open another terminal window, go to the `client` directory to start the client
 
-```
-cd client
+```bash
 npm run dev
 ```
 
@@ -188,7 +217,63 @@ Why did we choose this? Document your reasoning in a short paragraph, noting any
 
 ### Token Storage and Management
 
-Why did you choose your specific token storage and management strategies? Document any challenges you faced in balancing security with user experience. Reflect on the trade-offs and security measures involved.
+This application implements **JSON Web Tokens (JWT)** using an access token and refresh token system.
+
+- **Access tokens** are short-lived (**10 minutes**) and stored in **React state** to reduce exposure if stolen and prevent storage risks.
+- **Refresh tokens** are long-lived (**24 hours**) and stored in an **HttpOnly Cookie**, making them inaccessible to JavaScript and more secure against XSS attacks.
+
+#### Token Refresh System
+
+1. **The server generates tokens after successful `/login` and `/register` requests**
+
+[ Client ] → Login/Register → [ Server ]
+
+                 │
+                 ▼
+      (validate credentials)
+                 │
+                 ▼
+     ← accessToken + refreshToken →
+        - accessToken → React State (Client)
+        - refreshToken → HttpOnly Cookie (Server)
+
+2. **The client sends a request to a protected route**
+
+[ Client ] → Request with accessToken → [ Server ]
+
+                 │
+                 ▼
+        (verify accessToken)
+
+        ✔ VALID
+        ────────────────→ Request succeeds
+
+        ✖ EXPIRED
+        ────────────────→ 401 Unauthorized
+
+3. **If the server returns a `401`, the client attempts to refresh the access token**
+
+[ Client ] → /auth/refresh → [ Server ]
+
+                 │
+                 ▼
+     (verify refreshToken from cookie)
+
+        ✔ VALID
+        ────────────────→ New accessToken returned
+                          Client retries original request
+
+        ✖ INVALID / EXPIRED
+        ────────────────→ 403 Forbidden
+
+4. **If the server sends a `403`, the refresh token is invalid or expired**
+    - The client logs out the user
+    - The client redirects to `/login`
+
+The **token refresh system** strikes a balance between security and user experience:
+- **Short-lived access tokens** limit exposure to 10 minutes, which is a short window for hackers to get through and long enough for users to send a few requests without having to wait for verification each time.
+
+- **Long-lived refresh tokens** can't be accessed by the client and give the user 24 hours to use the application uninterrupted by login prompts. If they were to use public devices and forget to log out, another user of the device would only be able to access authenticated routes for 24 hours.
 
 ---
 
@@ -248,6 +333,7 @@ if (req.user && roles.includes(req.user.role)) {
   return res.status(403).json({
     message: "You are not authorized to access this resource"
   });
+}
 ```
 
 #### Admin Route Protection
@@ -288,6 +374,13 @@ router.get("/users", authMiddleware, auth("admin"), async (req, res) => {
 ---
 
 ### Phase 2: Authentication and Authorization Mechanisms
+
+#### Authentication Mechanisms
+
+- **Token Storage Decisions** - Originally, the plan was to use `localStorage` to store the tokens, as we were already had experience working with it. We started setting it up because we knew we had to store a token outside of state, so a user wouldn't have to login each time they refreshed the page. When we implemented the **refresh token system**, we noticed a trend of using `HttpOnly` cookies to store refresh tokens and storing only **short-lived** access tokens in React State. If either of the tokens were stored in `localStorage`, they were vulnerable to manipulation with JavaScript and defeated the purpose of the **refresh token system**. Using an `HttpOnly` cookie for refresh tokens and keeping access tokens in React state provided the most secure solution.
+
+- **Implementing Token Refresh** - Setting up the token refresh system was one of the more complex parts of authentication. We needed a way to keep users logged in without forcing them to log in again every time the access token expired. This required coordinating both the front-end and back-end so that when a request fails with a `401`, the client automatically attempts to refresh the token using the `/auth/refresh` endpoint and retries the original request. A challenge was making sure users were not logged out unnecessarily, while still enforcing security when the refresh token is no longer valid. This helped create a smoother user experience while still maintaining secure session control.
+
 #### Role-Based Access Control
 - **Authentication vs Authorization** - This helped us clearly see how these work together but do different things. Authentication checks if the user is logged in, while authorization controls what they can access. In our case, users could be logged in but still blocked from `/admin` if they weren’t an admin.
 - **Frontend vs Backend Security** - We realized that frontend protection is mainly for user experience, not security. Even if a route or button is hidden, users can still try to access it manually. The backend middleware is what actually enforces access control.
