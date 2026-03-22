@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import googleIcon from "../assets/images/google.svg";
+import { useEffect, useRef } from "react";
+import axios from "axios";
 
 export default function Register() {
   const [firstName, setFirstName] = useState("");
@@ -13,6 +15,7 @@ export default function Register() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const googleInitialized = useRef(false);
 
   const navigate = useNavigate();
   const { register } = useAuth();
@@ -36,8 +39,39 @@ export default function Register() {
     }
   };
 
+  useEffect(() => {
+    if (!window.google || googleInitialized.current) return;
+
+    window.google.accounts.id.initialize({
+      client_id: import.meta.env.GOOGLE_CLIENT_ID,
+      callback: handleGoogleCredentialResponse,
+    });
+
+    googleInitialized.current = true;
+  }, []);
+
   const handleGoogleSignup = () => {
-    alert("Google sign up clicked");
+    if (!window.google) {
+      console.error("Google Identity Services not loaded yet.");
+      return;
+    }
+    window.google.accounts.id.prompt(); 
+  };
+
+  const handleGoogleCredentialResponse = async (response) => {
+    try {
+      const { data } = await axios.post(
+        "/api/auth/google",
+        { credential: response.credential },
+        { withCredentials: true }
+      );
+
+      window.location.href = "/profile";
+    } catch (err) {
+      console.error(
+        err?.response?.data?.message || "Google signup failed"
+      );
+    }
   };
 
   return (
