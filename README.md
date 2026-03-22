@@ -401,6 +401,8 @@ router.get("/users", authMiddleware, auth("admin"), async (req, res) => {
 
 - **Consideration for CAPTCHA** – While working on this project, we also considered potential automated attacks, such as brute-force login attempts or spam registrations. In future iterations, integrating a **CAPTCHA system** could enhance security by ensuring that only human users can perform sensitive actions like logging in, registering, or resetting passwords.
 
+- **Inspired by NestJS @Throttle()** – While learning about NestJS, I discovered the **@Throttle() decorator**, which allows you to limit how many times a client can access a route within a certain time window. This gave me the insight that in the future, we could integrate a similar **rate-limiting mechanism** into our project to prevent brute-force login attempts, spam registrations, or excessive API calls, thereby enhancing the security and robustness of the application.
+
 - **Radzil add here**
 
 - **Token Storage Decisions** - Originally, the plan was to use `localStorage` to store the tokens, as we were already had experience working with it. We started setting it up because we knew we had to store a token outside of state, so a user wouldn't have to login each time they refreshed the page. When we implemented the **refresh token system**, we noticed a trend of using `HttpOnly` cookies to store refresh tokens and storing only **short-lived** access tokens in React State. If either of the tokens were stored in `localStorage`, they were vulnerable to manipulation with JavaScript and defeated the purpose of the **refresh token system**. Using an `HttpOnly` cookie for refresh tokens and keeping access tokens in React state provided the most secure solution.
