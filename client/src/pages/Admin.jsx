@@ -1,15 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
-import { useAuthFetch } from "../hooks/useAuthFetch";
 import { RiSearchLine, RiArrowDownSLine } from "react-icons/ri";
+import { useAuthFetch } from "../hooks/useAuthFetch";
 
 export default function Admin() {
+  const authFetch = useAuthFetch();
+
   const [users, setUsers] = useState([]);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [roleFilter, setRoleFilter] = useState("");
-
-  const authFetch = useAuthFetch();
 
   useEffect(() => {
     const fetchAdmin = async () => {
@@ -17,17 +17,22 @@ export default function Admin() {
         const res = await authFetch("/api/admin");
         const data = await res.json();
 
-        if (!res.ok) throw new Error(data.message || "Access denied");
+        if (!res.ok) {
+          throw new Error(data.message || "Access denied");
+        }
+
         setMessage(data.message);
 
         const usersRes = await authFetch("/api/admin/users");
         const usersData = await usersRes.json();
 
-        if (!usersRes.ok)
+        if (!usersRes.ok) {
           throw new Error(usersData.message || "Failed to load users");
+        }
+
         setUsers(usersData);
-      } catch (error) {
-        setError(error.message || "");
+      } catch (err) {
+        setError(err.message || "Something went wrong");
       }
     };
 
@@ -58,7 +63,7 @@ export default function Admin() {
   if (error) {
     return (
       <main className="relative min-h-screen overflow-hidden bg-gradient-to-br from-primary/10 via-bg to-accent/20 flex items-center justify-center">
-        <h2 className="text-red-400 text-xl">{error}</h2>
+        <h2 className="text-red-700 text-xl">{error}</h2>
       </main>
     );
   }
@@ -90,7 +95,6 @@ export default function Admin() {
               className="pl-10 bg-transparent w-full p-2 border border-border rounded-full text-fg focus:outline-none focus:ring-2 focus:ring-primary/50"
               placeholder="Search by name, username, or email..."
             />
-
             <RiSearchLine
               size={25}
               className="absolute left-3 top-9 text-border"
@@ -135,7 +139,6 @@ export default function Admin() {
                 </h3>
 
                 <p className="text-fg text-sm mt-1">@{user.username}</p>
-
                 <p className="text-fg text-sm mt-2 break-all">{user.email}</p>
 
                 <div className="absolute top-3 right-3">
