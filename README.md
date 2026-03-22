@@ -26,8 +26,8 @@ DORC is a MERN stack RPG-style productivity app that turns habit-building into a
 - [Authentication Mechanisms](#authentication-mechanisms)
 - [Role-Based Access Control](#role-based-access-control)
 - [Lessons Learned](#lessons-learned)
-    - [Phase 1](#phase-1-establishing-a-secure-https-server)
-    - [Phase 2](#phase-2-authentication-and-authorization-mechanisms)
+  - [Phase 1](#phase-1-establishing-a-secure-https-server)
+  - [Phase 2](#phase-2-authentication-and-authorization-mechanisms)
 
 ---
 
@@ -69,7 +69,7 @@ cp .env.example .env
 MONGODB_URI=mongodb+srv://<username>:<db_password>@cluster0.ifhq3qs.mongodb.net/?appName=Cluster0
 ```
 
-3. **Make sure** to change the values of `ACCESS_TOKEN_SECRET` and `REFRESH_TOKEN_SECRET` with your own secret keys ( *just in case Oda finally reveals the One Piece!* )
+3. **Make sure** to change the values of `ACCESS_TOKEN_SECRET` and `REFRESH_TOKEN_SECRET` with your own secret keys ( _just in case Oda finally reveals the One Piece!_ )
 
 ```
 ACCESS_TOKEN_SECRET=0NE
@@ -77,6 +77,7 @@ REFRESH_TOKEN_SECRET=P1ECE
 ```
 
 > We generated secure token secrets using OpenSSL
+>
 > ```bash
 > openssl rand -hex 64
 > ```
@@ -209,9 +210,16 @@ For temporary server errors, the `no-cache` caching policy is set to ensure temp
 
 ### Local Authentication
 
-**This is Owens part**
+We used **argon2** to hash user passwords before storing them in the database to ensure a high level of **security** (as it is considered more secure than many other **hashing algorithms**). In addition, all communication is conducted over **HTTPS**, which helps prevent passwords from being exposed during **data transmission**.
 
-Why did we choose this? Document your reasoning in a short paragraph, noting any past experiences or expectations that influenced your decision.
+#### Password Reset Flow
+
+When our team designed the **UserSchema**, **username** and **email** are required unique in our database. This not only prevents **duplicate accounts**, but also provides a reliable way to **identify users** when handling **password recovery** or **reset processes**.
+
+- The user clicks on **"Forgot Password"**
+- The user enters their **email address**
+- The backend would send a **temporary password reset link**(10mins) to the user’s email
+- The user uses the link to **set a new password**
 
 ### SSO Authentication
 
@@ -269,10 +277,11 @@ This application implements **JSON Web Tokens (JWT)** using an access token and 
         ────────────────→ 403 Forbidden
 
 4. **If the server sends a `403`, the refresh token is invalid or expired**
-    - The client logs out the user
-    - The client redirects to `/login`
+   - The client logs out the user
+   - The client redirects to `/login`
 
 The **token refresh system** strikes a balance between security and user experience:
+
 - **Short-lived access tokens** limit exposure to 10 minutes, which is a short window for hackers to get through and long enough for users to send a few requests without having to wait for verification each time.
 
 - **Long-lived refresh tokens** can't be accessed by the client and give the user 24 hours to use the application uninterrupted by login prompts. If they were to use public devices and forget to log out, another user of the device would only be able to access authenticated routes for 24 hours.
@@ -286,6 +295,7 @@ The **token refresh system** strikes a balance between security and user experie
 We enforce access control on both the **frontend** and **backend**. On the frontend, protected routes are only available to logged-in users. On the backend, middleware verifies both authentication and user role before allowing access to sensitive resources.
 
 ### Frontend Route Protection
+
 Protected pages are wrapped inside a `ProtectedRoute` component:
 
 ```jsx
@@ -295,6 +305,7 @@ Protected pages are wrapped inside a `ProtectedRoute` component:
   <Route path="/admin" element={<Admin />} />
 </Route>
 ```
+
 This ensures that only authenticated users can access `/leaderboard` and `/profile`. If a user is not logged in and tries to access these routes, they are redirected to the login page. Once a user is authenticated, they are redirected to the main page instead of seeing the login page again.
 
 The `/admin` route includes an additional role check. If a non-admin user attempts to access /admin, even by manually entering the URL, they are blocked and redirected back to a default page.
@@ -302,13 +313,15 @@ The `/admin` route includes an additional role check. If a non-admin user attemp
 The admin dashboard button on `Home.jsx` is only visible to users with the **Admin** role. This ensures that regular users do not see or attempt to access admin functionality through the interface.
 
 ### Backend Protection
+
 On the backend, access control is enforced using middleware for both **authentication** and **authorization**. This ensures security even if users try to bypass the frontend.
 
 #### Authentication (`authMiddleware`)
+
 - Extracts token from `req.headers.token`
 - Verifies token using `jwt.verify()`
 - Attaches decoded user data to `req.user`
-- Returns `401 Unauthorized` if: 
+- Returns `401 Unauthorized` if:
   - token is missing
   - token is invalid
 
@@ -324,6 +337,7 @@ req.user = decoded;
 ```
 
 #### Authorization (`authorize`)
+
 - Checks if `req.user` exists (user is authenticated)
 - Verifies that the user’s role matches the required role
 - Returns `403 Forbidden` if role is not allowed
@@ -333,15 +347,16 @@ if (req.user && roles.includes(req.user.role)) {
   next();
 } else {
   return res.status(403).json({
-    message: "You are not authorized to access this resource"
+    message: "You are not authorized to access this resource",
   });
 }
 ```
 
 #### Admin Route Protection
+
 Admin routes require **both** authentication and authorization:
 
-```jsx 
+```jsx
 router.get("/", authMiddleware, auth("admin"), (req, res) => { ... });
 
 router.get("/users", authMiddleware, auth("admin"), async (req, res) => {
@@ -349,12 +364,12 @@ router.get("/users", authMiddleware, auth("admin"), async (req, res) => {
   res.status(200).json(users);
 });
 ```
+
 - User must have a **valid JWT Token**
 - User must have the **Admin Role**
-- Non-admin users receive a `403` response 
+- Non-admin users receive a `403` response
 - Passwords are excluded using `.select("-password")`
 - Admins can **view all users (read-only)**
-  
 
 ---
 
@@ -362,13 +377,16 @@ router.get("/users", authMiddleware, auth("admin"), async (req, res) => {
 
 ### Phase 1: Establishing a Secure HTTPS Server
 
-#### Implementing HTTPS 
+#### Implementing HTTPS
+
 - Perhaps the hardest part about implementing HTTPS into the site was configuring it to be compatible with it in the first place. The server's VITE system required reconfiguring to properly feed the right files from the server.
 
 #### Setting Up Helmet
+
 - Helmet is very easy to use and their default security headers are standard in securing a web application. In addition to security headers, we learned that the middleware can also handle the HSTS policy for HTTPS and allowed us to remove the HSTS dependancy and streamline our code.
 
 #### Fetch API Data
+
 - When fetching data from an API, never assume that the request will succeed. The server can always return an error status (e.g., 404 or 500). So ensure that the app handles error gracefully.
 - Using `UseEffect` runs API requests when the component first loads. The UI renders before the data is returned, so setting a safe initial state (an empty array) is important to prevent errors when handling asynchronous data.
 - Adding loading states helped improve UX by giving feedback while data is being fetched.
@@ -379,7 +397,7 @@ router.get("/users", authMiddleware, auth("admin"), async (req, res) => {
 
 #### Authentication Mechanisms
 
-- **Owen add here**
+- - **Dual Token Mechanism (Access & Refresh Tokens)** - Implementing a dual token system allowed us to balance **security** and **user convenience**. Short-lived **access tokens** provide a limited window for potential attacks, while long-lived **refresh tokens** stored in **HttpOnly cookies** keep users logged in without exposing sensitive data to JavaScript. This approach ensures that users have a seamless experience, minimizing frequent logins, while still maintaining a high level of protection against token theft and XSS attacks. We also learned the importance of handling **token expiration** and **failed refresh attempts** gracefully to prevent unauthorized access and maintain session integrity.
 
 - **Radzil add here**
 
@@ -388,6 +406,7 @@ router.get("/users", authMiddleware, auth("admin"), async (req, res) => {
 - **Implementing Token Refresh** - Setting up the token refresh system was one of the more complex parts of authentication. We needed a way to keep users logged in without forcing them to log in again every time the access token expired. This required coordinating both the front-end and back-end so that when a request fails with a `401`, the client automatically attempts to refresh the token using the `/auth/refresh` endpoint and retries the original request. A challenge was making sure users were not logged out unnecessarily, while still enforcing security when the refresh token is no longer valid. This helped create a smoother user experience while still maintaining secure session control.
 
 #### Role-Based Access Control
+
 - **Authentication vs Authorization** - This helped us clearly see how these work together but do different things. Authentication checks if the user is logged in, while authorization controls what they can access. In our case, users could be logged in but still blocked from `/admin` if they weren’t an admin.
 - **Frontend vs Backend Security** - We realized that frontend protection is mainly for user experience, not security. Even if a route or button is hidden, users can still try to access it manually. The backend middleware is what actually enforces access control.
 - **Middleware Order** - One issue we ran into was making sure middleware runs in the correct order. `authMiddleware` has to run first so `req.user` exists before checking the role. This showed how each step depends on the previous one.
