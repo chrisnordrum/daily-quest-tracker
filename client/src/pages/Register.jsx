@@ -51,6 +51,8 @@ export default function Register() {
   }, []);
 
   const handleGoogleSignup = () => {
+    alert("Due to technical issues,Google signup is currently unavailable. Please try again later.");
+    console.log("Client ID:", import.meta.env.VITE_GOOGLE_CLIENT_ID);
     if (!window.google) {
       console.error("Google Identity Services not loaded yet.");
       return;
