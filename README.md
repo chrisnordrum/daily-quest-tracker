@@ -397,7 +397,7 @@ router.get("/users", authMiddleware, auth("admin"), async (req, res) => {
 
 #### Authentication Mechanisms
 
-- - **Dual Token Mechanism (Access & Refresh Tokens)** - Implementing a dual token system allowed us to balance **security** and **user convenience**. Short-lived **access tokens** provide a limited window for potential attacks, while long-lived **refresh tokens** stored in **HttpOnly cookies** keep users logged in without exposing sensitive data to JavaScript. This approach ensures that users have a seamless experience, minimizing frequent logins, while still maintaining a high level of protection against token theft and XSS attacks. We also learned the importance of handling **token expiration** and **failed refresh attempts** gracefully to prevent unauthorized access and maintain session integrity.
+- **Dual Token Mechanism (Access & Refresh Tokens)** - Implementing a dual token system allowed us to balance **security** and **user convenience**. Short-lived **access tokens** provide a limited window for potential attacks, while long-lived **refresh tokens** stored in **HttpOnly cookies** keep users logged in without exposing sensitive data to JavaScript. This approach ensures that users have a seamless experience, minimizing frequent logins, while still maintaining a high level of protection against token theft and XSS attacks. We also learned the importance of handling **token expiration** and **failed refresh attempts** gracefully to prevent unauthorized access and maintain session integrity.
 
 - **Radzil add here**
 
