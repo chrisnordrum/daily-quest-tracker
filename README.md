@@ -209,9 +209,13 @@ For temporary server errors, the `no-cache` caching policy is set to ensure temp
 
 ### Local Authentication
 
+**This is Owens part**
+
 Why did we choose this? Document your reasoning in a short paragraph, noting any past experiences or expectations that influenced your decision.
 
 ### SSO Authentication
+
+**This is Radzils part**
 
 Why did we choose this? Document your reasoning in a short paragraph, noting any past experiences or expectations that influenced your decision.
 
@@ -350,7 +354,7 @@ router.get("/users", authMiddleware, auth("admin"), async (req, res) => {
 - User must have a **valid JWT Token**
 - User must have the **Admin Role**
 - Non-admin users receive a `403` response 
-- Passwords are excluded using `.select("-password"`
+- Passwords are excluded using `.select("-password")`
 - Admins can **view all users (read-only)**
   
 
@@ -376,6 +380,10 @@ router.get("/users", authMiddleware, auth("admin"), async (req, res) => {
 ### Phase 2: Authentication and Authorization Mechanisms
 
 #### Authentication Mechanisms
+
+- **Owen add here**
+
+- **Radzil add here**
 
 - **Token Storage Decisions** - Originally, the plan was to use `localStorage` to store the tokens, as we were already had experience working with it. We started setting it up because we knew we had to store a token outside of state, so a user wouldn't have to login each time they refreshed the page. When we implemented the **refresh token system**, we noticed a trend of using `HttpOnly` cookies to store refresh tokens and storing only **short-lived** access tokens in React State. If either of the tokens were stored in `localStorage`, they were vulnerable to manipulation with JavaScript and defeated the purpose of the **refresh token system**. Using an `HttpOnly` cookie for refresh tokens and keeping access tokens in React state provided the most secure solution.
 
