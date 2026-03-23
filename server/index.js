@@ -62,6 +62,25 @@ app.use(
 const routes = require("./routes");
 app.use("/api", routes);
 
+// for google
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: false,
+      httpOnly: true,
+      sameSite: "lax",
+    },
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use("/auth", googleRoutes);
+
 // Serve Vite build
 const distPath = path.join(__dirname, "..", "client", "dist");
 app.use(express.static(distPath));
@@ -95,25 +114,6 @@ async function connectToMongoDB() {
     process.exit(1);
   }
 }
-
-// for google
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      secure: false,
-      httpOnly: true,
-      sameSite: "lax",
-    },
-  })
-);
-
-app.use(passport.initialize());
-app.use(passport.session());
-
-app.use("/auth", googleRoutes);
 
 // Create and start the HTTPS server
 https.createServer(options, app).listen(PORT, () => {
