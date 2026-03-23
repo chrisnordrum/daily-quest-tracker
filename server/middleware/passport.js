@@ -29,6 +29,7 @@ passport.use(
             first_name: "Google",
             last_name: "User",
             role: "user",
+            authProvider: "google",
           });
         } else {
           if (!user.googleId) {
