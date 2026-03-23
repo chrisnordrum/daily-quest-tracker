@@ -30,6 +30,8 @@ const userSchema = new mongoose.Schema({
     enum: ["user", "admin"],
     default: "user",
   },
+  googleId: { type: String, default: null },
+  authProvider: { type: String, enum: ["local", "google"], default: "local" },
 });
 
 const User = mongoose.model("User", userSchema);
