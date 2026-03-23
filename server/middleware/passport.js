@@ -3,10 +3,11 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const User = require("../models/User");
 
 passport.use(
-    new GoogleStrategy({
-        clientID: process.env.GOOGLE_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: "https://localhost:5050/auth/google/callback"
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: "https://localhost:5050/auth/google/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
@@ -21,16 +22,20 @@ passport.use(
         if (!user) {
           user = await User.create({
             googleId: profile.id,
-            username: profile.displayName,
-            email,
-            authProvider: "google",
+            username:
+              profile.displayName || `googleuser_${new Date().getTime()}`,
+            email: email,
+            password: "oauth_temp_password",
+            first_name: "Google",
+            last_name: "User",
+            role: "user",
           });
         } else {
           if (!user.googleId) {
             user.googleId = profile.id;
           }
           if (!user.username) {
-            user.username = profile.displayName;
+            user.username = profile.displayName || user.username;
           }
           if (!user.email && email) {
             user.email = email;
@@ -43,8 +48,8 @@ passport.use(
       } catch (error) {
         return done(error, null);
       }
-    }
-  )
+    },
+  ),
 );
 
 passport.serializeUser((user, done) => done(null, user.id));
