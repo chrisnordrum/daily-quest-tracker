@@ -38,6 +38,7 @@ passport.use(
           if (!user.username) {
             user.username = profile.displayName || user.username;
           }
+          // this one is redundant because when registering, the email is required and unique.
           if (!user.email && email) {
             user.email = email;
           }
