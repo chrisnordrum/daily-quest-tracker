@@ -232,7 +232,7 @@ When our team designed the **UserSchema**, **username** and **email** are requir
 
 ### SSO Authentication
 
-SSO Configuration was relatively difficult, as it needed taking what we already know about it, and having to reconfigure it to match our app type. Everything is hopefully set up as it should be, though it is not currently connected to the MongoDB backend. The SSO uses Google's **OAuth 2.0 system**, as it was the most common form of SSO and the easiest to set up due to it being connected to Google, and as such didn't need to go through any other system.
+This app uses SSO Authentication (not to be confused with SSL) using Google's OAuth 2.0 system to help make signin easy for the user, while also increasing security by adding a second layer of authentication to the user login via Google.
 
 ### Token Storage and Management
 
@@ -412,7 +412,7 @@ router.get("/users", authMiddleware, auth("admin"), async (req, res) => {
 
 - **Inspired by NestJS @Throttle()** – While learning about NestJS, I discovered the **@Throttle() decorator**, which allows you to limit how many times a client can access a route within a certain time window. This gave me the insight that in the future, we could integrate a similar **rate-limiting mechanism** into our project to prevent brute-force login attempts, spam registrations, or excessive API calls, thereby enhancing the security and robustness of the application.
 
-- **Radzil add here**
+- **SSO Implementation** - Adding SSO Configuration was relatively difficult, as it needed taking what we already know about it, and having to reconfigure it to match our app type. The app's SSO uses Google's **OAuth 2.0 system**, as it was the most common form of SSO and the easiest to set up due to it being connected to Google, and as such didn't need to go through any other system. Getting it to actually work took some debugging and reorganizing, but it should be fully effective by the next full version release.
 
 - **Token Storage Decisions** - Originally, the plan was to use `localStorage` to store the tokens, as we were already had experience working with it. We started setting it up because we knew we had to store a token outside of state, so a user wouldn't have to login each time they refreshed the page. When we implemented the **refresh token system**, we noticed a trend of using `HttpOnly` cookies to store refresh tokens and storing only **short-lived** access tokens in React State. If either of the tokens were stored in `localStorage`, they were vulnerable to manipulation with JavaScript and defeated the purpose of the **refresh token system**. Using an `HttpOnly` cookie for refresh tokens and keeping access tokens in React state provided the most secure solution.
 
