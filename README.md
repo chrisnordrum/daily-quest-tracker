@@ -37,6 +37,7 @@ DORC is a MERN stack RPG-style productivity app that turns habit-building into a
 
 - Make sure you have [Node.js](https://nodejs.org/en) and [OpenSSL](https://www.openssl.org/) installed on your device.
 - Make sure you have a [MongoDB](https://www.mongodb.com/) database set up (MongoDB Atlas or local MongoDB).
+- Make sure you have a Google account and access to the [Google Cloud Console](https://console.cloud.google.com/) for OAuth setup.
 
 ### Installation
 
@@ -65,18 +66,26 @@ cp .env.example .env
 
 2. Inside the `.env` file, make sure to change the value of `MONGODB_URI` to your own [MongoDB Atlas](https://www.mongodb.com/products/platform) connection string using the `Mongoose` driver
 
-```
+```env
 MONGODB_URI=mongodb+srv://<username>:<db_password>@cluster0.ifhq3qs.mongodb.net/?appName=Cluster0
 ```
 
-3. **Make sure** to change the values of `ACCESS_TOKEN_SECRET` and `REFRESH_TOKEN_SECRET` with your own secret keys ( _just in case Oda finally reveals the One Piece!_ )
+3. Change the values of `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` to your own Google 0Auth credentials from the [Google Cloud Console](https://console.cloud.google.com/)
 
-```
-ACCESS_TOKEN_SECRET=0NE
-REFRESH_TOKEN_SECRET=P1ECE
+```env
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
 ```
 
-> We generated secure token secrets using OpenSSL
+4. **Make sure** to change the values of `ACCESS_TOKEN_SECRET`, `REFRESH_TOKEN_SECRET`, and `SESSION_SECRET` with your own secret keys ( _just in case Oda finally reveals the One Piece!_ )
+
+```env
+ACCESS_TOKEN_SECRET=THE
+REFRESH_TOKEN_SECRET=0NE
+SESSION_SECRET=P1ECE
+```
+
+> We generated secure secrets using [OpenSSL](https://www.openssl.org/)
 >
 > ```bash
 > openssl rand -hex 64
