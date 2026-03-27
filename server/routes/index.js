@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-// Routes: Users, Quests, Ranks, Badges, Daily Quotes
+// Routes: Users, Quests, Ranks, Badges, Daily Quotes, Auth, Admin
 const usersRoutes = require("./usersRoutes");
 const questsRoutes = require("./questsRoutes");
 const ranksRoutes = require("./ranksRoutes");
