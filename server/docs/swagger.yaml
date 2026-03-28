@@ -283,6 +283,7 @@ paths:
   /api/auth/refresh:
     get:
       summary: Refresh access token using refresh token cookie.
+      description: Refresh access token using refresh token cookie.
       tags:
         - Auth
       security:
@@ -321,6 +322,7 @@ paths:
   /api/auth/logout:
     post:
       summary: Logout user and clear refresh token cookie
+      description: Logout user and clear refresh token cookie.
       tags:
         - Auth
       responses:
