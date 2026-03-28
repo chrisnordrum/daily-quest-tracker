@@ -1,0 +1,417 @@
+openapi: 3.0.0
+
+info:
+  title: Daily Quest Tracker API
+  version: 1.0.0
+  description: Daily Quest Tracker API documentation
+
+components:
+  securitySchemes:
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: token
+
+paths:
+  /api/users:
+    get:
+      summary: Get users' data from data.json file.
+      tags:
+        - Users
+      responses:
+        200:
+          description: Successfully returned users' data from data.json file.
+        500:
+          description: Failed to get users' data from data.json file.
+
+  /api/quests:
+    get:
+      summary: Get all quests from data.json file.
+      tags:
+        - Quests
+      description: Fetch all quests from data.json file.
+      responses:
+        200:
+          description: Successfully returned all quests.
+
+    post:
+      summary: Create a new quest to data.json file.
+      tags:
+        - Quests
+      description: Save a new quest to data.json file.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - description
+                - xpReward
+                - completed
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                xpReward:
+                  type: integer
+                completed:
+                  type: boolean
+      responses:
+        201:
+          description: Quest created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  title:
+                    type: string
+                  description:
+                    type: string
+                  xpReward:
+                    type: integer
+                  completed:
+                    type: boolean
+        400:
+          description: Missing required fields
+        500:
+          description: Server error
+
+  /api/ranks:
+    get:
+      security:
+        - tokenAuth: []
+      summary: Get rank data from data.json file.
+      tags:
+        - Ranks
+      description: Requires authentication (JWT token in the request header)
+      responses:
+        200:
+          description: Successfully returned ranks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    name:
+                      type: string
+                    level:
+                      type: integer
+                    xp:
+                      type: integer
+                    position:
+                      type: integer
+
+        401:
+          description: No token, authorization denied or token is not valid
+        500:
+          description: Failed to get ranks from data.json file.
+
+  /api/badges:
+    get:
+      summary: Get badge data from data.json file.
+      tags:
+        - Badges
+      description: Fetch all badges from data.json file.
+      responses:
+        200:
+          description: Successfully returned all badges.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    name:
+                      type: string
+                    description:
+                      type: string
+                    icon:
+                      type: string
+                    alt:
+                      type: string
+                    criteria:
+                      type: object
+                      additionalProperties: true
+
+  /api/dailyQuotes:
+    get:
+      summary: Get daily quote data from data.json file.
+      tags:
+        - Daily Quotes
+      description: Fetch daily quote from data.json file.
+      responses:
+        200:
+          description: Successfully returned daily quote.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  quote:
+                    type: string
+                  author:
+                    type: string
+        500:
+          description: Failed to get daily quotes from data.json file.
+
+  /api/auth/register:
+    post:
+      summary: Register a new user.
+      tags:
+        - Auth
+      description: Register a new user.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+                - email
+                - first_name
+                - last_name
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                email:
+                  type: string
+                first_name:
+                  type: string
+                last_name:
+                  type: string
+      responses:
+        201:
+          description: User created successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  accessToken:
+                    type: string
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      username:
+                        type: string
+                      email:
+                        type: string
+                      first_name:
+                        type: string
+                      last_name:
+                        type: string
+                      role:
+                        type: string
+      400:
+        description: Username, password, email, first name and last name are required or user already exists or email already exists.
+      500:
+        description: Internal server error.
+
+  /api/auth/login:
+    post:
+      summary: Login a user.
+      tags:
+        - Auth
+      description: Login a user.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        200:
+          description: Login successful.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  accessToken:
+                    type: string
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      role:
+                        type: string
+                      username:
+                        type: string
+                      email:
+                        type: string
+                      first_name:
+                        type: string
+                      last_name:
+                        type: string
+      400:
+        description: Invalid username or password.
+      500:
+        description: Internal server error.
+
+  /api/auth/refresh:
+    get:
+      summary: Refresh access token using refresh token cookie.
+      tags:
+        - Auth
+      security:
+        - tokenAuth: []
+      responses:
+        200:
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                accessToken:
+                  type: string
+                user:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    role:
+                      type: string
+                    username:
+                      type: string
+                    email:
+                      type: string
+                    first_name:
+                      type: string
+                    last_name:
+                      type: string
+      401:
+        description: Unauthorized (no cookie or invalid token)
+      403:
+        description: Forbidden (invalid refresh token)
+
+  /api/auth/logout:
+    post:
+      summary: Logout user and clear refresh token cookie
+      tags:
+        - Auth
+      responses:
+        200:
+          description: Logged out successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        401:
+          description: Unauthorized, no cookie to clear.
+        500:
+          description: Internal server error.
+
+  /api/admin:
+    get:
+      security:
+        - tokenAuth: []
+      summary: Get admin dashboard.
+      tags:
+        - Admin
+      description: Requires authentication (JWT token in the request header) and authorization (Admin role)
+      responses:
+        200:
+          description: Welcome to the admin dashboard!
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        401:
+          description: Token is not valid or no token provided.
+        403:
+          description: Forbidden, user is not an admin.
+
+  /api/admin/users:
+    get:
+      security:
+        - tokenAuth: []
+      summary: Get admin dashboard.
+      tags:
+        - Admin
+      description: Requires authentication (JWT token in the request header) and authorization (Admin role)
+      responses:
+        200:
+          description: Successfully returned all users for the admin.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    _id:
+                      type: string
+                    username:
+                      type: string
+                    first_name:
+                      type: string
+                    last_name:
+                      type: string
+                    role:
+                      type: string
+                      enum: [user, admin]
+                    authProvider:
+                      type: string
+                      enum: [local, google]
+                    googleId:
+                      type: string
+                      nullable: true
+                    __v:
+                      type: integer
+
+        401:
+          description: Token is not valid or no token provided.
+        403:
+          description: Forbidden, user is not an admin.
+        500:
+          description: Error fetching all users for the admin.
+
+  /auth/google/callback:
+    get:
+      summary: Google OAuth.
+      description: Google SSO.
+      tags:
+        - Auth
+      responses:
+        200:
+          description: Login successfully with Google OAuth.

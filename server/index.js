@@ -11,9 +11,15 @@ const cookieParser = require("cookie-parser");
 const passport = require("passport");
 require("./middleware/passport");
 const googleRoutes = require("./routes/googleRoutes");
+const swaggerUi = require("swagger-ui-express");
+const YAML = require("yamljs");
 
 const PORT = process.env.PORT || 5050;
 const app = express();
+
+// Swagger API documentation
+const swaggerDocument = YAML.load(path.join(__dirname, "docs", "swagger.yaml"));
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Middleware
 app.use(express.json());
@@ -73,7 +79,7 @@ app.use(
       httpOnly: true,
       sameSite: "lax",
     },
-  })
+  }),
 );
 
 app.use(passport.initialize());
