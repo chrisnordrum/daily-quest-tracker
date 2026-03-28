@@ -21,6 +21,7 @@ DORC is a MERN stack RPG-style productivity app that turns habit-building into a
 ## Table of Contents
 
 - [Setup Instructions](#setup-instructions)
+- [API Documentation](#api-documentation)
 - [SSL Configuration](#ssl-configuration)
 - [Caching Strategies](#caching-strategies)
 - [Authentication Mechanisms](#authentication-mechanisms)
@@ -120,6 +121,12 @@ npm run dev
 ```
 
 3. Open [http://localhost:5173](http://localhost:5173) in your browser during development (changes to React files appear instantly due to Hot Module Replacement (HMR))
+
+---
+
+## API Documentation
+
+In our team we use Swagger API as our documentation, if you visit [http://localhost:5050/api-docs](http://localhost:5050/api-docs), you can find all APIs with descriptions.
 
 ---
 
