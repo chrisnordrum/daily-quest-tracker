@@ -169,10 +169,15 @@ export default function Profile() {
                                         className="w-full p-3 rounded-full bg-bg border border-border text-fg outline-none focus:ring-2 focus:ring-primary/30"
                                     />
                                 </div>
+                                
+                                <div className="flex items-center justify-end gap-3">
+                                <button>
+                                    Cancel
+                                </button>
                                 <button
                                     type="submit"
                                     onClick={handleUpdateProfile}
-                                    className="mt-4 px-6 py-2 bg-primary text-white rounded-full transition duration-200 ease-in-out border border-transparent
+                                    className="px-4 py-2.5 bg-primary text-white rounded-full transition duration-200 ease-in-out border border-transparent
                                     hover:bg-primary
                                     dark:bg-accent
                                     dark:hover:bg-card
@@ -182,6 +187,7 @@ export default function Profile() {
                                 >
                                     Save Changes
                                 </button>
+                                </div>
                             </form>
                         </div>
                     </div>
