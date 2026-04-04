@@ -26,10 +26,14 @@ DORC is a MERN stack RPG-style productivity app that turns habit-building into a
 - [Caching Strategies](#caching-strategies)
 - [Authentication Mechanisms](#authentication-mechanisms)
 - [Role-Based Access Control](#role-based-access-control)
+- [Input Validation Techniques](#input-validation-techniques)
+- [Ouput Encoding Methods](#output-encoding-methods)
+- [Encryption Techniques](#encryption-techniques)
+- [Third-Party Libraries Dependency Management](#third-party-libraries-dependency-management)
 - [Lessons Learned](#lessons-learned)
   - [Phase 1](#phase-1-establishing-a-secure-https-server)
   - [Phase 2](#phase-2-authentication-and-authorization-mechanisms)
-
+  - [Phase 3](#phase-3-implementing-security-best-practices)
 ---
 
 ## Setup Instructions
@@ -389,6 +393,36 @@ router.get("/users", authMiddleware, auth("admin"), async (req, res) => {
 
 ---
 
+## Input Validation Techniques
+
+What types of vulnerabilities can arise from improper input validation?
+
+---
+
+## Output Encoding Methods
+
+How does output encoding prevent XSS attacks?
+
+---
+
+## Encryption Techniques
+
+What challenges did you encounter with encryption, and how did you resolve them?
+
+---
+
+## Third-Party Libraries Dependency Management
+
+Why is it risky to use outdated third-party libraries? How does automation help with dependency management? What risks does it have?
+
+---
+
+## AI Tools
+
+Which AI tools you used, for which tasks, and how you verified the output
+
+---
+
 ## Lessons Learned
 
 ### Phase 1: Establishing a Secure HTTPS Server
@@ -438,3 +472,7 @@ router.get("/users", authMiddleware, auth("admin"), async (req, res) => {
 - **Simplicity vs Flexibility** - We kept the system simple with just **User** and **Admin** roles. This made it easier to build and test, but it would need to be expanded if more detailed permissions are needed later.
 - **Main Challenge** - The biggest challenge was making sure everything worked together, not just individually. It wasn’t enough to protect routes on the frontend or backend alone. We had to make sure both layers were working together so that even if someone tried to access `/admin` directly, they would still be blocked. Getting this fully working required testing multiple scenarios and fixing small issues between frontend routing and backend checks.
 - **Testing Restricted Access** - We tested different edge cases like missing tokens, invalid tokens, and wrong roles. This helped confirm that the system properly blocks unauthorized users and only allows access where it should.
+
+---
+
+### Phase 3: Implementing Security Best Practices
