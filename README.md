@@ -413,13 +413,49 @@ What challenges did you encounter with encryption, and how did you resolve them?
 
 ## Third-Party Libraries Dependency Management
 
-Why is it risky to use outdated third-party libraries? How does automation help with dependency management? What risks does it have?
+We use GitHub Actions to manage dependencies for both the client and server folders in this project. Since they are separate directories, the workflow runs each step twice using `working-directory`; once for `/server` and once for `/client`.
+
+Every Monday at 9:00 AM (via a cron schedule), the workflow:
+
+- installs dependencies using `npm ci`
+- runs `npm audit` to check for vulnerabilities
+- updates dependencies safely using `npm update`
+- checks again for moderate or higher vulnerabilities
+- posts a summary in the Actions tab so we can review any issues
+
+The workflow **does not automatically fix vulnerabilities**, which means we are responsible for reviewing and deciding how to handle them.
+
+### Risks
+
+Outdated libraries can contain known security vulnerabilities that attackers can exploit. They may also stop working properly with newer tools or environments, causing bugs or instability in the app.
+
+Automation helps by regularly checking for vulnerabilities and keeping dependencies up to date without needing manual effort.
+
+The risk is that automation can update dependencies without fully understanding the impact, which might introduce bugs or breaking changes.
 
 ---
 
 ## AI Tools
 
 Which AI tools you used, for which tasks, and how you verified the output
+
+### Third-Party Libraries Dependency Management
+
+For this part of the project, I used ChatGPT to help generate and refine the GitHub Actions workflows and improve my understanding of dependency management concepts.
+
+#### Tasks it was used for:
+
+- Creating and structuring GitHub Actions YAML files
+- Debugging and improving workflow configuration
+- Explaining how dependency auditing and updates work
+- Helping write and refine README documentation
+
+#### How the output was verified:
+
+- Ran the workflows in GitHub Actions to confirm they executed correctly
+- Checked that dependencies were installed and updated as expected in both client and server folders
+- Verified that audit results appeared correctly in the workflow summary
+- Reviewed and tested any generated code manually before using it
 
 ---
 
