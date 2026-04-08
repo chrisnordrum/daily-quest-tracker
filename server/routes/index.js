@@ -11,7 +11,7 @@ const authRoutes = require("./authRoutes");
 const adminRoutes = require("./adminRoutes");
 
 // router.use("/users", usersRoutes);
-// user route has been removed, now we use /api/auth/login
+// deprecated: user route has been removed, use /api/auth/login instead
 router.use("/quests", questsRoutes);
 router.use("/ranks", ranksRoutes);
 router.use("/badges", badgesRoutes);
