@@ -32,6 +32,7 @@ const userSchema = new mongoose.Schema({
   },
   googleId: { type: String, default: null },
   authProvider: { type: String, enum: ["local", "google"], default: "local" },
+  bio: { type: String, default: null },
 });
 
 const User = mongoose.model("User", userSchema);

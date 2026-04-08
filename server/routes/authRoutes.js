@@ -10,7 +10,7 @@ router.post("/register", authController.register);
 router.post("/login", authController.login);
 
 //PATCH request to modify a user
-router.PATCH("/modify-profile", authMiddleware, authController.modifyProfile);
+router.patch("/modify-profile", authMiddleware, authController.modifyProfile);
 
 // GET request to refresh the access token
 router.get("/refresh", authController.refresh);

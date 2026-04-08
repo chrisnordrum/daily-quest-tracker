@@ -219,9 +219,47 @@ const logout = async (req, res) => {
   res.status(200).json({ message: "Logged out successfully" });
 };
 
+/**
+ * Controller: Modify a user's profile
+ *
+ * Handles PATCH requests to modify a user's profile.
+ *
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @returns {JSON} - JSON object with success message and user information
+ */
+const modifyProfile = async (req, res) => {
+  const { id } = req.user;
+  const { username, first_name, last_name, email, bio } = req.body;
+  try {
+    const user = await User.findById(id);
+    if (!user) return res.status(401).json({ message: "Unauthorized" });
+    user.first_name = first_name;
+    user.last_name = last_name;
+    user.email = email;
+    user.bio = bio;
+    await user.save();
+
+    const responseUser = {
+      username: user.username,
+      email: user.email,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      bio: user.bio,
+    };
+
+    res
+      .status(200)
+      .json({ message: "Profile modified successfully", user: responseUser });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = {
   register,
   login,
   refresh,
   logout,
+  modifyProfile,
 };
