@@ -190,8 +190,10 @@ paths:
                   type: string
                 password:
                   type: string
+                  minLength: 8
                 email:
                   type: string
+                  format: email
                 first_name:
                   type: string
                 last_name:
@@ -223,8 +225,10 @@ paths:
                         type: string
                       role:
                         type: string
+                      bio:
+                        type: string
       400:
-        description: Username, password, email, first name and last name are required or user already exists or email already exists.
+        description: Username, password, email, first name and last name are required or user already exists or email already exists or password is not at least 8 characters long.
       500:
         description: Internal server error.
 
@@ -248,6 +252,7 @@ paths:
                   type: string
                 password:
                   type: string
+                  minLength: 8
       responses:
         200:
           description: Login successful.
@@ -275,8 +280,10 @@ paths:
                         type: string
                       last_name:
                         type: string
+                      bio:
+                        type: string
       400:
-        description: Invalid username or password.
+        description: Invalid username or password or password is not at least 8 characters long.
       500:
         description: Internal server error.
 
@@ -341,12 +348,18 @@ paths:
               properties:
                 first_name:
                   type: string
+                  required: true
                 last_name:
                   type: string
+                  required: true
                 email:
                   type: string
+                  format: email
+                  unique: true
+                  required: true
                 bio:
                   type: string
+                  required: true
       responses:
         200:
           description: Profile modified successfully.
