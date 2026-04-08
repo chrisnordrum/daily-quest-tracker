@@ -230,7 +230,7 @@ const logout = async (req, res) => {
  */
 const modifyProfile = async (req, res) => {
   const { id } = req.user;
-  const { username, first_name, last_name, email, bio } = req.body;
+  const { first_name, last_name, email, bio } = req.body;
   try {
     const user = await User.findById(id);
     if (!user) return res.status(401).json({ message: "Unauthorized" });

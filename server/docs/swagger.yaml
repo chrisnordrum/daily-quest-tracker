@@ -319,6 +319,60 @@ paths:
       403:
         description: Forbidden (invalid refresh token)
 
+  /api/auth/modify-profile:
+    patch:
+      security:
+        - tokenAuth: []
+      summary: Modify a user's profile.
+      tags:
+        - Auth
+      description: Requires authentication (JWT token in the request header)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - first_name
+                - last_name
+                - email
+                - bio
+              properties:
+                first_name:
+                  type: string
+                last_name:
+                  type: string
+                email:
+                  type: string
+                bio:
+                  type: string
+      responses:
+        200:
+          description: Profile modified successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  user:
+                    type: object
+                    properties:
+                      username:
+                        type: string
+                      email:
+                        type: string
+                      first_name:
+                        type: string
+                      bio:
+                        type: string
+        401:
+          description: Unauthorized, no token provided.
+        500:
+          description: Internal server error.
+
   /api/auth/logout:
     post:
       summary: Logout user and clear refresh token cookie
