@@ -13,16 +13,16 @@ components:
       name: token
 
 paths:
-  /api/users:
-    get:
-      summary: Get users' data from data.json file.
-      tags:
-        - Users
-      responses:
-        200:
-          description: Successfully returned users' data from data.json file.
-        500:
-          description: Failed to get users' data from data.json file.
+  # /api/users:
+  #   get:
+  #     summary: Get users' data from data.json file.
+  #     tags:
+  #       - Users
+  #     responses:
+  #       200:
+  #         description: Successfully returned users' data from data.json file.
+  #       500:
+  #         description: Failed to get users' data from data.json file.
 
   /api/quests:
     get:
