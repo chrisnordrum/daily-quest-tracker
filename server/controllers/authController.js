@@ -78,6 +78,7 @@ const register = async (req, res) => {
         email: newUser.email,
         first_name: newUser.first_name,
         last_name: newUser.last_name,
+        bio: newUser.bio,
       },
     });
   } catch (error) {
