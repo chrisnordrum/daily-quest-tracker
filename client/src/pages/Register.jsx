@@ -3,6 +3,20 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import googleIcon from "../assets/images/google.svg";
 
+import {
+  sanitizeName,
+  sanitizeUsername,
+  sanitizeEmail,
+  sanitizePassword,
+} from "../utils/sanitizer";
+
+import {
+  validateName,
+  validateUsername,
+  validateEmail,
+  validatePassword,
+} from "../utils/validators";
+
 export default function Register() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -10,6 +24,7 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -23,9 +38,60 @@ export default function Register() {
     setSuccess(false);
     setError(null);
 
+    const cleanedData = {
+      firstName: sanitizeName(firstName).trim(),
+      lastName: sanitizeName(lastName).trim(),
+      username: sanitizeUsername(username),
+      email: sanitizeEmail(email),
+      password: sanitizePassword(password),
+    };
+
+    const newErrors = {};
+
+    if (!cleanedData.firstName) {
+      newErrors.firstName = "First name is required.";
+    } else if (!validateName(cleanedData.firstName)) {
+      newErrors.firstName = "Enter a valid first name.";
+    }
+
+    if (!cleanedData.lastName) {
+      newErrors.lastName = "Last name is required.";
+    } else if (!validateName(cleanedData.lastName)) {
+      newErrors.lastName = "Enter a valid last name.";
+    }
+
+    if (!cleanedData.username) {
+      newErrors.username = "Username is required.";
+    } else if (!validateUsername(cleanedData.username)) {
+      newErrors.username =
+        "Username must be 3–20 characters and use only letters, numbers, or underscores.";
+    }
+
+    if (!cleanedData.email) {
+      newErrors.email = "Email is required.";
+    } else if (!validateEmail(cleanedData.email)) {
+      newErrors.email = "Enter a valid email address.";
+    }
+
+    if (!cleanedData.password) {
+      newErrors.password = "Password is required.";
+    } else if (!validatePassword(cleanedData.password)) {
+      newErrors.password = "Password must be at least 6 characters.";
+    }
+
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length > 0) return;
+
     try {
       setLoading(true);
-      await register(username, password, firstName, lastName, email);
+      await register(
+        cleanedData.username,
+        cleanedData.password,
+        cleanedData.firstName,
+        cleanedData.lastName,
+        cleanedData.email
+      );
       setSuccess(true);
       navigate("/");
     } catch (error) {
@@ -37,7 +103,7 @@ export default function Register() {
   };
 
   const handleGoogleSignup = () => {
-  window.location.assign("https://localhost:5050/auth/google");
+    window.location.assign("https://localhost:5050/auth/google");
   };
 
   return (
@@ -73,51 +139,104 @@ export default function Register() {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
-                <input
-                  id="firstName"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  type="text"
-                  placeholder="First Name"
-                  className="p-3 rounded-full bg-bg border border-border text-fg w-full outline-none focus:ring-2 focus:ring-accent/30"
-                />
+                <div className="flex flex-col w-full">
+                  <input
+                    id="firstName"
+                    value={firstName}
+                    onChange={(e) =>
+                      setFirstName(sanitizeName(e.target.value))
+                    }
+                    type="text"
+                    placeholder="First Name"
+                    className={`p-3 rounded-full bg-bg border text-fg w-full outline-none focus:ring-2 focus:ring-accent/30 ${
+                      errors.firstName ? "border-red-500" : "border-border"
+                    }`}
+                  />
+                  {errors.firstName && (
+                    <span className="text-sm text-red-500 px-2">
+                      {errors.firstName}
+                    </span>
+                  )}
+                </div>
 
-                <input
-                  id="lastName"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  type="text"
-                  placeholder="Last Name"
-                  className="p-3 rounded-full bg-bg border border-border text-fg w-full outline-none focus:ring-2 focus:ring-accent/30"
-                />
+                <div className="flex flex-col w-full">
+                  <input
+                    id="lastName"
+                    value={lastName}
+                    onChange={(e) =>
+                      setLastName(sanitizeName(e.target.value))
+                    }
+                    type="text"
+                    placeholder="Last Name"
+                    className={`p-3 rounded-full bg-bg border text-fg w-full outline-none focus:ring-2 focus:ring-accent/30 ${
+                      errors.lastName ? "border-red-500" : "border-border"
+                    }`}
+                  />
+                  {errors.lastName && (
+                    <span className="text-sm text-red-500 px-2">
+                      {errors.lastName}
+                    </span>
+                  )}
+                </div>
               </div>
 
-              <input
-                id="username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                type="text"
-                placeholder="Username"
-                className="p-3 rounded-full bg-bg border border-border text-fg outline-none focus:ring-2 focus:ring-primary/30"
-              />
+              <div className="flex flex-col">
+                <input
+                  id="username"
+                  value={username}
+                  onChange={(e) =>
+                    setUsername(sanitizeUsername(e.target.value))
+                  }
+                  type="text"
+                  placeholder="Username"
+                  className={`p-3 rounded-full bg-bg border text-fg outline-none focus:ring-2 focus:ring-primary/30 ${
+                    errors.username ? "border-red-500" : "border-border"
+                  }`}
+                />
+                {errors.username && (
+                  <span className="text-sm text-red-500 px-2">
+                    {errors.username}
+                  </span>
+                )}
+              </div>
 
-              <input
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                type="email"
-                placeholder="Email"
-                className="p-3 rounded-full bg-bg border border-border text-fg outline-none focus:ring-2 focus:ring-primary/30"
-              />
+              <div className="flex flex-col">
+                <input
+                  id="email"
+                  value={email}
+                  onChange={(e) =>
+                    setEmail(sanitizeEmail(e.target.value))
+                  }
+                  type="email"
+                  placeholder="Email"
+                  className={`p-3 rounded-full bg-bg border text-fg outline-none focus:ring-2 focus:ring-primary/30 ${
+                    errors.email ? "border-red-500" : "border-border"
+                  }`}
+                />
+                {errors.email && (
+                  <span className="text-sm text-red-500 px-2">
+                    {errors.email}
+                  </span>
+                )}
+              </div>
 
-              <input
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                type="password"
-                placeholder="Password"
-                className="p-3 rounded-full bg-bg border border-border text-fg outline-none focus:ring-2 focus:ring-primary/30"
-              />
+              <div className="flex flex-col">
+                <input
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  type="password"
+                  placeholder="Password"
+                  className={`p-3 rounded-full bg-bg border text-fg outline-none focus:ring-2 focus:ring-primary/30 ${
+                    errors.password ? "border-red-500" : "border-border"
+                  }`}
+                />
+                {errors.password && (
+                  <span className="text-sm text-red-500 px-2">
+                    {errors.password}
+                  </span>
+                )}
+              </div>
 
               <button
                 disabled={loading}
@@ -138,6 +257,7 @@ export default function Register() {
                   {error}
                 </span>
               )}
+
               <div>
                 <p className="text-center">or</p>
               </div>
