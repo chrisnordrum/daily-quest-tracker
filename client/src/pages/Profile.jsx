@@ -1,6 +1,7 @@
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useAuthFetch } from "../hooks/useAuthFetch";
 import {
   RiEditBoxLine,
   RiCloseLine,
@@ -25,6 +26,8 @@ import {
 
 export default function Profile() {
   const { user, loggedIn } = useAuth();
+
+  const authFetch = useAuthFetch();
 
   const fullName =
     user?.first_name && user?.last_name
@@ -119,7 +122,7 @@ export default function Profile() {
     setSuccessMessage("");
   };
 
-  const handleUpdateProfile = (e) => {
+  const handleUpdateProfile = async (e) => {
     e.preventDefault();
 
     setSuccessMessage("");
@@ -167,9 +170,32 @@ export default function Profile() {
 
     if (Object.keys(newErrors).length > 0) return;
 
-    alert("Profile updated successfully!");
-    setSuccessMessage("Profile updated successfully!");
-    setOpenUpdateModal(false);
+    try {
+      const res = await authFetch("/api/auth/modify-profile", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          first_name: cleanedData.firstName,
+          last_name: cleanedData.lastName,
+          email: cleanedData.email,
+          bio: cleanedData.bio,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to update profile");
+      }
+
+      setSuccessMessage("Profile updated successfully!");
+    } catch (error) {
+      console.error(error.message);
+    } finally {
+      setOpenUpdateModal(false);
+    }
   };
 
   return (
