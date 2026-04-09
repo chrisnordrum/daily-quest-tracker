@@ -76,7 +76,7 @@ export default function Register() {
     if (!cleanedData.password) {
       newErrors.password = "Password is required.";
     } else if (!validatePassword(cleanedData.password)) {
-      newErrors.password = "Password must be at least 6 characters.";
+      newErrors.password = "Password must be at least 8 characters.";
     }
 
     setErrors(newErrors);
@@ -90,7 +90,7 @@ export default function Register() {
         cleanedData.password,
         cleanedData.firstName,
         cleanedData.lastName,
-        cleanedData.email
+        cleanedData.email,
       );
       setSuccess(true);
       navigate("/");
@@ -143,9 +143,7 @@ export default function Register() {
                   <input
                     id="firstName"
                     value={firstName}
-                    onChange={(e) =>
-                      setFirstName(sanitizeName(e.target.value))
-                    }
+                    onChange={(e) => setFirstName(sanitizeName(e.target.value))}
                     type="text"
                     placeholder="First Name"
                     className={`p-3 rounded-full bg-bg border text-fg w-full outline-none focus:ring-2 focus:ring-accent/30 ${
@@ -163,9 +161,7 @@ export default function Register() {
                   <input
                     id="lastName"
                     value={lastName}
-                    onChange={(e) =>
-                      setLastName(sanitizeName(e.target.value))
-                    }
+                    onChange={(e) => setLastName(sanitizeName(e.target.value))}
                     type="text"
                     placeholder="Last Name"
                     className={`p-3 rounded-full bg-bg border text-fg w-full outline-none focus:ring-2 focus:ring-accent/30 ${
@@ -204,9 +200,7 @@ export default function Register() {
                 <input
                   id="email"
                   value={email}
-                  onChange={(e) =>
-                    setEmail(sanitizeEmail(e.target.value))
-                  }
+                  onChange={(e) => setEmail(sanitizeEmail(e.target.value))}
                   type="email"
                   placeholder="Email"
                   className={`p-3 rounded-full bg-bg border text-fg outline-none focus:ring-2 focus:ring-primary/30 ${
