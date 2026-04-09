@@ -1,20 +1,27 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import {
+  validateUsername,
+  validatePassword,
+} from "../utils/validators";
+import {
+  sanitizeUsername,
+  sanitizePassword,
+} from "../utils/sanitizer";
+
 import googleIcon from "../assets/images/google.svg";
 
 export default function Login() {
-  // Form input states
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  // Form status states
+  const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-
   const { login } = useAuth();
 
   const handleGoogleLogin = () => {
@@ -27,20 +34,38 @@ export default function Login() {
     setSuccess(false);
     setError(null);
 
+    const cleanedUsername = sanitizeUsername(username);
+    const cleanedPassword = sanitizePassword(password);
+
+    const newErrors = {};
+
+    if (!cleanedUsername) {
+      newErrors.username = "Username is required.";
+    } else if (!validateUsername(cleanedUsername)) {
+      newErrors.username =
+        "Username must be 3 to 20 characters and use only letters, numbers, or underscores.";
+    }
+
+    if (!cleanedPassword) {
+      newErrors.password = "Password is required.";
+    } else if (!validatePassword(cleanedPassword)) {
+      newErrors.password = "Password must be at least 8 characters.";
+    }
+
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length > 0) return;
+
     try {
       setLoading(true);
 
-      // Pass the form data to the register function
-      await login(username, password);
+      await login(cleanedUsername, cleanedPassword);
 
       setSuccess(true);
-
-      // Redirect to Quest page
       navigate("/");
     } catch (error) {
       setError(error.message);
-      console.error(error.message); // remove this later
-      // setError("Registration is not connected yet"); // just for now
+      console.error(error.message);
     } finally {
       setLoading(false);
     }
@@ -78,23 +103,41 @@ export default function Login() {
                 </p>
               </div>
 
-              <input
-                id="username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                type="text"
-                placeholder="Username"
-                className="p-3 rounded-full bg-bg border border-border text-fg outline-none focus:ring-2 focus:ring-primary/30"
-              />
+              <div className="flex flex-col gap-1">
+                <input
+                  id="username"
+                  value={username}
+                  onChange={(e) => setUsername(sanitizeUsername(e.target.value))}
+                  type="text"
+                  placeholder="Username"
+                  className={`p-3 rounded-full bg-bg border text-fg outline-none focus:ring-2 focus:ring-primary/30 ${
+                    errors.username ? "border-red-500" : "border-border"
+                  }`}
+                />
+                {errors.username && (
+                  <span className="text-sm text-red-500 px-2">
+                    {errors.username}
+                  </span>
+                )}
+              </div>
 
-              <input
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                type="password"
-                placeholder="Password"
-                className="p-3 rounded-full bg-bg border border-border text-fg outline-none focus:ring-2 focus:ring-primary/30"
-              />
+              <div className="flex flex-col gap-1">
+                <input
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  type="password"
+                  placeholder="Password"
+                  className={`p-3 rounded-full bg-bg border text-fg outline-none focus:ring-2 focus:ring-primary/30 ${
+                    errors.password ? "border-red-500" : "border-border"
+                  }`}
+                />
+                {errors.password && (
+                  <span className="text-sm text-red-500 px-2">
+                    {errors.password}
+                  </span>
+                )}
+              </div>
 
               <button
                 disabled={loading}
@@ -109,6 +152,7 @@ export default function Login() {
                   Signed in successfully
                 </span>
               )}
+
               {error && (
                 <span className="text-sm text-center text-red-500">
                   {error}
