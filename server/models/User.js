@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema({
   authProvider: { type: String, enum: ["local", "google"], default: "local" },
   bio: { type: String, default: null },
   email_iv: { type: String, required: true },
-  bio_iv: { type: String, required: true },
+  bio_iv: { type: String, default: null },
 });
 
 const User = mongoose.model("User", userSchema);
