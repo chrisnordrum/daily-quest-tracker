@@ -205,9 +205,18 @@ const refresh = async (req, res) => {
         id: user._id,
         role: user.role,
         username: user.username,
-        email: user.email,
+        email: aesDecrypt(
+          user.email,
+          process.env.EMAIL_ENCRYPTION_SECRET,
+          user.email_iv,
+        ),
         first_name: user.first_name,
         last_name: user.last_name,
+        bio: aesDecrypt(
+          user.bio,
+          process.env.BIO_ENCRYPTION_SECRET,
+          user.bio_iv,
+        ),
       },
     });
   } catch (error) {
