@@ -1,6 +1,7 @@
 const validate = require("../middleware/validate");
 const { body } = require("express-validator");
 const User = require("../models/User");
+const { aesEncrypt } = require("../utils/crypto");
 
 const register = validate([
   body("username")
@@ -95,7 +96,7 @@ const modifyProfile = validate([
       const { email_iv } = user;
 
       //encrypt the user's email
-      const userEncryptedEmail = await aesEncrypt(
+      const userEncryptedEmail = aesEncrypt(
         email,
         process.env.EMAIL_ENCRYPTION_SECRET,
         email_iv,
@@ -103,7 +104,7 @@ const modifyProfile = validate([
 
       //check if the user's email is the same as the email in the request
       const sameEmailUser = await User.findOne({
-        email: userEncryptedEmail,
+        email: userEncryptedEmail.encryptedMessage,
         _id: { $ne: id },
       });
       if (sameEmailUser) {
