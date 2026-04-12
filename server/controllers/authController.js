@@ -42,6 +42,12 @@ const register = async (req, res) => {
       email,
       process.env.EMAIL_ENCRYPTION_SECRET,
     );
+
+    //encrypt the bio
+    const encryptedBio = aesEncrypt(
+      "You can edit your bio here",
+      process.env.BIO_ENCRYPTION_SECRET,
+    );
     //create a new user
     const newUser = new User({
       username,
@@ -50,6 +56,8 @@ const register = async (req, res) => {
       last_name,
       email: encryptedEmail.encryptedMessage,
       email_iv: encryptedEmail.iv,
+      bio: encryptedBio.encryptedMessage,
+      bio_iv: encryptedBio.iv,
     });
     //save the user to the database
     await newUser.save();
@@ -83,10 +91,18 @@ const register = async (req, res) => {
         id: newUser._id,
         role: newUser.role,
         username: newUser.username,
-        email: newUser.email,
+        email: aesDecrypt(
+          newUser.email,
+          process.env.EMAIL_ENCRYPTION_SECRET,
+          newUser.email_iv,
+        ),
         first_name: newUser.first_name,
         last_name: newUser.last_name,
-        bio: newUser.bio,
+        bio: aesDecrypt(
+          newUser.bio,
+          process.env.BIO_ENCRYPTION_SECRET,
+          newUser.bio_iv,
+        ),
       },
     });
   } catch (error) {
