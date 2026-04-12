@@ -11,7 +11,7 @@ import {
 
 import {
   sanitizeName,
-  sanitizeUsername,
+  // sanitizeUsername,
   sanitizeEmail,
   sanitizeText,
   sanitizePassword,
@@ -19,7 +19,7 @@ import {
 
 import {
   validateName,
-  validateUsername,
+  // validateUsername,
   validateEmail,
   validatePassword,
 } from "../utils/validators";
@@ -39,7 +39,7 @@ export default function Profile() {
 
   const [firstName, setFirstName] = useState(user?.first_name || "");
   const [lastName, setLastName] = useState(user?.last_name || "");
-  const [username, setUsername] = useState(user?.username || "");
+  // const [username, setUsername] = useState(user?.username || "");
   const [email, setEmail] = useState(user?.email || "");
   const [bio, setBio] = useState(user?.bio || "");
 
@@ -108,7 +108,7 @@ export default function Profile() {
   const handleOpenUpdateModal = () => {
     setFirstName(user?.first_name || "");
     setLastName(user?.last_name || "");
-    setUsername(user?.username || "");
+    // setUsername(user?.username || "");
     setEmail(user?.email || "");
     setBio(user?.bio || "");
     setErrors({});
@@ -130,7 +130,7 @@ export default function Profile() {
     const cleanedData = {
       firstName: sanitizeName(firstName).trim(),
       lastName: sanitizeName(lastName).trim(),
-      username: sanitizeUsername(username),
+      // username: sanitizeUsername(username),
       email: sanitizeEmail(email),
       bio: sanitizeText(bio).trim(),
     };
@@ -149,12 +149,12 @@ export default function Profile() {
       newErrors.lastName = "Enter a valid last name.";
     }
 
-    if (!cleanedData.username) {
+    /* if (!cleanedData.username) {
       newErrors.username = "Username is required.";
     } else if (!validateUsername(cleanedData.username)) {
       newErrors.username =
         "Username must be 3 to 20 characters and use only letters, numbers, or underscores.";
-    }
+    } */
 
     if (!cleanedData.email) {
       newErrors.email = "Email is required.";
@@ -358,7 +358,7 @@ export default function Profile() {
                 </div>
               </div>
 
-              <div>
+              {/* <div>
                 <label
                   className="block text-sm font-medium text-fg mb-1"
                   htmlFor="username"
@@ -379,7 +379,7 @@ export default function Profile() {
                     {errors.username}
                   </span>
                 )}
-              </div>
+              </div> */}
 
               <div>
                 <label
