@@ -38,7 +38,7 @@ const register = async (req, res) => {
     const hashedPassword = await argon2.hash(password);
 
     //encrypt the email
-    const encryptedEmail = await aesEncrypt(
+    const encryptedEmail = aesEncrypt(
       email,
       process.env.EMAIL_ENCRYPTION_SECRET,
     );
