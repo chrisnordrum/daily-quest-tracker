@@ -83,12 +83,14 @@ GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
 ```
 
-4. **Make sure** to change the values of `ACCESS_TOKEN_SECRET`, `REFRESH_TOKEN_SECRET`, and `SESSION_SECRET` with your own secret keys ( _just in case Oda finally reveals the One Piece!_ )
+4. **Make sure** to change the values of `ACCESS_TOKEN_SECRET`, `REFRESH_TOKEN_SECRET`, `SESSION_SECRET`, `EMAIL_ENCRYPTION_SECRET` and `BIO_ENCRYPTION_SECRET` with your own secret keys ( _just in case Oda finally reveals the One Piece!_ )
 
 ```env
 ACCESS_TOKEN_SECRET=THE
 REFRESH_TOKEN_SECRET=0NE
 SESSION_SECRET=P1ECE
+EMAIL_ENCRYPTION_SECRET=YOUR_16_BYTE_KEY
+BIO_ENCRYPTION_SECRET=YOUR_16_BYTE_KEY
 ```
 
 > We generated secure secrets using [OpenSSL](https://www.openssl.org/)
@@ -418,7 +420,7 @@ What challenges did you encounter with encryption, and how did you resolve them?
 
 One of the biggest challenges we encountered with encryption was that the email field was previously required to be unique in the schema. After encrypting the email, the encrypted output changes each time (because of different IVs), which breaks the uniqueness constraint and makes duplicate detection impossible.
 
-To resolve this, we moved the encryption logic into middleware, where the email is encrypted before being stored. We also stored the IV alongside the encrypted value so the data can be properly decrypted when needed. This approach allowed us to keep the data encrypted while still maintaining the necessary validation and update flow.
+To resolve this, we added the encryption and decryption methods into some middlewares. We also stored the IV alongside the encrypted value so the data can be properly decrypted when needed. This approach allowed us to keep the data encrypted while still maintaining the necessary validation and update flow.
 
 ---
 
