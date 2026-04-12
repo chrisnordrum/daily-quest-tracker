@@ -1,6 +1,7 @@
 const argon2 = require("argon2");
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
+const { aesEncrypt, aesDecrypt } = require("../utils/crypto");
 
 /**
  * Controller: Register a new user
@@ -35,13 +36,20 @@ const register = async (req, res) => {
     }
     //hash the password
     const hashedPassword = await argon2.hash(password);
+
+    //encrypt the email
+    const encryptedEmail = await aesEncrypt(
+      email,
+      process.env.EMAIL_ENCRYPTION_SECRET,
+    );
     //create a new user
     const newUser = new User({
       username,
       password: hashedPassword,
       first_name,
       last_name,
-      email,
+      email: encryptedEmail.encryptedMessage,
+      email_iv: encryptedEmail.iv,
     });
     //save the user to the database
     await newUser.save();
@@ -139,10 +147,18 @@ const login = async (req, res) => {
         id: user._id,
         role: user.role,
         username: user.username,
-        email: user.email,
+        email: aesDecrypt(
+          user.email,
+          process.env.EMAIL_ENCRYPTION_SECRET,
+          user.email_iv,
+        ),
         first_name: user.first_name,
         last_name: user.last_name,
-        bio: user.bio,
+        bio: aesDecrypt(
+          user.bio,
+          process.env.BIO_ENCRYPTION_SECRET,
+          user.bio_iv,
+        ),
       },
     });
   } catch (error) {
@@ -236,8 +252,17 @@ const modifyProfile = async (req, res) => {
     if (!user) return res.status(401).json({ message: "Unauthorized" });
     user.first_name = first_name;
     user.last_name = last_name;
-    user.email = email;
-    user.bio = bio;
+    //encrypt the email
+    const encryptedEmail = aesEncrypt(
+      email,
+      process.env.EMAIL_ENCRYPTION_SECRET,
+    );
+    user.email = encryptedEmail.encryptedMessage;
+    user.email_iv = encryptedEmail.iv;
+    //encrypt the bio
+    const encryptedBio = aesEncrypt(bio, process.env.BIO_ENCRYPTION_SECRET);
+    user.bio = encryptedBio.encryptedMessage;
+    user.bio_iv = encryptedBio.iv;
     await user.save();
 
     const responseUser = {

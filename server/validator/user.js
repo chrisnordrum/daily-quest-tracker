@@ -85,8 +85,28 @@ const modifyProfile = validate([
     .normalizeEmail()
     .bail()
     .custom(async (email, { req }) => {
-      const user = await User.findOne({ email, _id: { $ne: req.user.id } });
-      if (user) {
+      //get the id from the req
+      const { id } = req.user;
+
+      //get the user from the database
+      const user = await User.findById(id);
+
+      //get the email_iv from the database
+      const { email_iv } = user;
+
+      //encrypt the user's email
+      const userEncryptedEmail = await aesEncrypt(
+        email,
+        process.env.EMAIL_ENCRYPTION_SECRET,
+        email_iv,
+      );
+
+      //check if the user's email is the same as the email in the request
+      const sameEmailUser = await User.findOne({
+        email: userEncryptedEmail,
+        _id: { $ne: id },
+      });
+      if (sameEmailUser) {
         return Promise.reject("Email already exists");
       }
     }),
