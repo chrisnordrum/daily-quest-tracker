@@ -25,7 +25,7 @@ import {
 } from "../utils/validators";
 
 export default function Profile() {
-  const { user, loggedIn } = useAuth();
+  const { user, setUser, loggedIn } = useAuth();
 
   const authFetch = useAuthFetch();
 
@@ -190,6 +190,11 @@ export default function Profile() {
         throw new Error(data.message || "Failed to update profile");
       }
 
+      setUser((prev) => ({
+        ...prev,
+        ...data.user,
+      }));
+
       setSuccessMessage("Profile updated successfully!");
     } catch (error) {
       console.error(error.message);
@@ -239,11 +244,11 @@ export default function Profile() {
                 </div>
 
                 <p className="text-fg">Full Name: {fullName || "N/A"}</p>
-                <p className="text-fg">
+                {/* <p className="text-fg">
                   Username: {user?.username || username || "N/A"}
-                </p>
-                <p className="text-fg">Email: {user?.email || email || "N/A"}</p>
-                <p className="text-fg">Bio: {user?.bio || bio || "N/A"}</p>
+                </p> */}
+                <p className="text-fg">Email: {user?.email || "N/A"}</p>
+                <p className="text-fg">Bio: {user?.bio || "N/A"}</p>
 
                 {successMessage && (
                   <p className="text-sm text-green-600 mt-4">{successMessage}</p>
@@ -322,7 +327,7 @@ export default function Profile() {
                     id="firstName"
                     type="text"
                     value={firstName}
-                    onChange={(e) => setFirstName(sanitizeName(e.target.value))}
+                    onChange={(e) => setFirstName(e.target.value)}
                     className={`w-full p-3 rounded-full bg-bg border text-fg outline-none focus:ring-2 focus:ring-primary/30 ${
                       errors.firstName ? "border-red-500" : "border-border"
                     }`}
@@ -345,7 +350,7 @@ export default function Profile() {
                     id="lastName"
                     type="text"
                     value={lastName}
-                    onChange={(e) => setLastName(sanitizeName(e.target.value))}
+                    onChange={(e) => setLastName(e.target.value)}
                     className={`w-full p-3 rounded-full bg-bg border text-fg outline-none focus:ring-2 focus:ring-primary/30 ${
                       errors.lastName ? "border-red-500" : "border-border"
                     }`}
@@ -392,7 +397,7 @@ export default function Profile() {
                   id="email"
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(sanitizeEmail(e.target.value))}
+                  onChange={(e) => setEmail(e.target.value)}
                   className={`w-full p-3 rounded-full bg-bg border text-fg outline-none focus:ring-2 focus:ring-primary/30 ${
                     errors.email ? "border-red-500" : "border-border"
                   }`}
@@ -414,7 +419,7 @@ export default function Profile() {
                 <textarea
                   id="bio"
                   value={bio}
-                  onChange={(e) => setBio(sanitizeText(e.target.value))}
+                  onChange={(e) => setBio(e.target.value)}
                   rows={4}
                   placeholder="Tell us a little about yourself"
                   className={`w-full p-3 rounded-3xl bg-bg border text-fg outline-none resize-none focus:ring-2 focus:ring-primary/30 ${
@@ -483,7 +488,7 @@ export default function Profile() {
                     type={showNewPassword ? "text" : "password"}
                     value={newPassword}
                     onChange={(e) =>
-                      setNewPassword(sanitizePassword(e.target.value))
+                      setNewPassword(e.target.value)
                     }
                     className={`w-full p-3 pr-12 rounded-full bg-bg border text-fg outline-none focus:ring-2 focus:ring-primary/30 ${
                       errors.newPassword ? "border-red-500" : "border-border"
@@ -524,7 +529,7 @@ export default function Profile() {
                     type={showConfirmPassword ? "text" : "password"}
                     value={confirmPassword}
                     onChange={(e) =>
-                      setConfirmPassword(sanitizePassword(e.target.value))
+                      setConfirmPassword(e.target.value)
                     }
                     className={`w-full p-3 pr-12 rounded-full bg-bg border text-fg outline-none focus:ring-2 focus:ring-primary/30 ${
                       errors.confirmPassword

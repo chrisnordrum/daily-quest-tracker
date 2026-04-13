@@ -143,7 +143,7 @@ export default function Register() {
                   <input
                     id="firstName"
                     value={firstName}
-                    onChange={(e) => setFirstName(sanitizeName(e.target.value))}
+                    onChange={(e) => setFirstName(e.target.value)}
                     type="text"
                     placeholder="First Name"
                     className={`p-3 rounded-full bg-bg border text-fg w-full outline-none focus:ring-2 focus:ring-accent/30 ${
@@ -161,7 +161,7 @@ export default function Register() {
                   <input
                     id="lastName"
                     value={lastName}
-                    onChange={(e) => setLastName(sanitizeName(e.target.value))}
+                    onChange={(e) => setLastName(e.target.value)}
                     type="text"
                     placeholder="Last Name"
                     className={`p-3 rounded-full bg-bg border text-fg w-full outline-none focus:ring-2 focus:ring-accent/30 ${
@@ -181,7 +181,7 @@ export default function Register() {
                   id="username"
                   value={username}
                   onChange={(e) =>
-                    setUsername(sanitizeUsername(e.target.value))
+                    setUsername(e.target.value)
                   }
                   type="text"
                   placeholder="Username"
@@ -200,7 +200,7 @@ export default function Register() {
                 <input
                   id="email"
                   value={email}
-                  onChange={(e) => setEmail(sanitizeEmail(e.target.value))}
+                  onChange={(e) => setEmail(e.target.value)}
                   type="email"
                   placeholder="Email"
                   className={`p-3 rounded-full bg-bg border text-fg outline-none focus:ring-2 focus:ring-primary/30 ${

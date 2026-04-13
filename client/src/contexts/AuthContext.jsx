@@ -100,6 +100,7 @@ export function AuthProvider({ children }) {
   const values = {
     token,
     user,
+    setUser,
     loading,
     loggedIn,
     register,
