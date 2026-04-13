@@ -398,20 +398,39 @@ router.get("/users", authMiddleware, auth("admin"), async (req, res) => {
 
 ## Input Validation Techniques
 
-What types of vulnerabilities can arise from improper input validation?
-
 Improper input validation can lead to vulnerabilities where attackers submit malicious code that gets injected into a website or database. This may result in attacks such as SQL injection, cross-site scripting (XSS), or command injection. Therefore, user input should always be validated and sanitized to filter out harmful content before it is processed or stored.
+
+On the frontend, input is first sanitized to clean and normalize user data before validation. For example, text inputs remove unsafe characters like < and >, names only allow letters and certain symbols, usernames are restricted to lowercase letters, numbers, and underscores, and emails are trimmed and normalized. Passwords are minimally modified to preserve user intent while still removing unnecessary whitespace.
+
+Validation is then applied to ensure the cleaned input meets specific rules:
+
+- Names must follow a defined character pattern and length
+- Usernames must be between 3–20 characters and use only allowed characters
+- Emails must match a valid email structure
+- Passwords must meet minimum length requirements
+
+These checks help ensure that only properly formatted and expected data is accepted before being sent to the server.
+
+On the backend, validation is enforced again using tools like express-validator. This is critical because client-side validation can be bypassed. Server-side validation ensures that all incoming data is secure, properly formatted, and safe before interacting with the database or application logic.
 
 ---
 
 ## Output Encoding Methods
 
-How does output encoding prevent XSS attacks?
-
 Output encoding prevents XSS attacks by ensuring that any dynamic content is treated as plain text instead of executable code when rendered in the browser. Even if malicious input slips through, encoding converts characters like <, >, and " into safe representations, preventing scripts from running.
 
-On the server side, we used express-validator to validate and sanitize incoming data. On the frontend, we built the UI with React and avoided directly manipulating the HTML DOM (such as using dangerouslySetInnerHTML). Since React escapes content by default, this further reduces the risk of XSS and helps ensure that user-generated content is rendered safely.
+On the frontend, this is further reinforced by using React, which automatically escapes dynamic content by default. This means user-generated data is safely displayed without being interpreted as HTML or JavaScript, unless explicitly overridden (such as with dangerouslySetInnerHTML, which is avoided).
 
+---
+## Integration of Frontend and Backend Validation
+
+Frontend and backend validation work together to create a layered approach to application security. On the frontend, input is first sanitized and validated to provide immediate feedback to users and prevent obviously incorrect or unsafe data from being submitted. This improves usability while reducing unnecessary server requests.
+
+However, frontend validation alone is not sufficient, as it can be bypassed. For this reason, the backend performs its own validation using tools such as express-validator. This ensures that all incoming data is checked again before being processed or stored, protecting the application from malicious input.
+
+In addition, output encoding on the frontend ensures that any data returned from the server is rendered safely. Frameworks like React automatically escape dynamic content, preventing it from being interpreted as executable code in the browser.
+
+Together, these layers form a defense-in-depth strategy. The frontend enhances user experience and filters basic input, while the backend enforces strict security rules. This combined approach significantly reduces the risk of vulnerabilities such as XSS and injection attacks.
 ---
 
 ## Encryption Techniques
