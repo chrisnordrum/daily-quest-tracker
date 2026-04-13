@@ -34,6 +34,7 @@ DORC is a MERN stack RPG-style productivity app that turns habit-building into a
   - [Phase 1](#phase-1-establishing-a-secure-https-server)
   - [Phase 2](#phase-2-authentication-and-authorization-mechanisms)
   - [Phase 3](#phase-3-implementing-security-best-practices)
+
 ---
 
 ## Setup Instructions
@@ -82,12 +83,14 @@ GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
 ```
 
-4. **Make sure** to change the values of `ACCESS_TOKEN_SECRET`, `REFRESH_TOKEN_SECRET`, and `SESSION_SECRET` with your own secret keys ( _just in case Oda finally reveals the One Piece!_ )
+4. **Make sure** to change the values of `ACCESS_TOKEN_SECRET`, `REFRESH_TOKEN_SECRET`, `SESSION_SECRET`, `EMAIL_ENCRYPTION_SECRET` and `BIO_ENCRYPTION_SECRET` with your own secret keys ( _just in case Oda finally reveals the One Piece!_ )
 
 ```env
 ACCESS_TOKEN_SECRET=THE
 REFRESH_TOKEN_SECRET=0NE
 SESSION_SECRET=P1ECE
+EMAIL_ENCRYPTION_SECRET=YOUR_16_BYTE_KEY
+BIO_ENCRYPTION_SECRET=YOUR_16_BYTE_KEY
 ```
 
 > We generated secure secrets using [OpenSSL](https://www.openssl.org/)
@@ -397,17 +400,27 @@ router.get("/users", authMiddleware, auth("admin"), async (req, res) => {
 
 What types of vulnerabilities can arise from improper input validation?
 
+Improper input validation can lead to vulnerabilities where attackers submit malicious code that gets injected into a website or database. This may result in attacks such as SQL injection, cross-site scripting (XSS), or command injection. Therefore, user input should always be validated and sanitized to filter out harmful content before it is processed or stored.
+
 ---
 
 ## Output Encoding Methods
 
 How does output encoding prevent XSS attacks?
 
+Output encoding prevents XSS attacks by ensuring that any dynamic content is treated as plain text instead of executable code when rendered in the browser. Even if malicious input slips through, encoding converts characters like <, >, and " into safe representations, preventing scripts from running.
+
+On the server side, we used express-validator to validate and sanitize incoming data. On the frontend, we built the UI with React and avoided directly manipulating the HTML DOM (such as using dangerouslySetInnerHTML). Since React escapes content by default, this further reduces the risk of XSS and helps ensure that user-generated content is rendered safely.
+
 ---
 
 ## Encryption Techniques
 
 What challenges did you encounter with encryption, and how did you resolve them?
+
+One of the biggest challenges we encountered with encryption was that the email field was previously required to be unique in the schema. After encrypting the email, the encrypted output changes each time (because of different IVs), which breaks the uniqueness constraint and makes duplicate detection impossible.
+
+To resolve this, we added the encryption and decryption methods into some middlewares. We also stored the IV alongside the encrypted value so the data can be properly decrypted when needed. This approach allowed us to keep the data encrypted while still maintaining the necessary validation and update flow.
 
 ---
 
@@ -512,3 +525,23 @@ For this part of the project, I used ChatGPT to help generate and refine the Git
 ---
 
 ### Phase 3: Implementing Security Best Practices
+
+#### Input Validation with Express Validator
+
+- **Express Validator as Middleware** - One of the most useful tools we used in this phase was **Express Validator**. It gave us a structured way to validate and sanitize incoming request data before it reached our controller logic. This helped us keep our routes more secure and easier to maintain.
+
+- **Synchronous and Asynchronous Validation** - A key thing we learned is that Express Validator supports both **synchronous** validation (such as checking whether username is empty, validating email format, or enforcing password length) and **asynchronous** validation (such as checking whether a username or email already exists in the database). This made it flexible enough to handle both simple rules and more realistic application requirements.
+
+- **Keeping Validation Out of Route Parameters** - One important lesson was that validation logic should be organized carefully. Instead of writing large amounts of validation logic directly inside route parameters, we tried to structure validation as reusable **middleware** attached to the routes. This kept the routing layer much cleaner and prevented the routes from becoming difficult to read or maintain.
+
+#### Encryption Considerations
+
+- **Encryption Improves Data Protection** - Encryption is a strong way to protect sensitive user data in storage. It adds an extra layer of security by making the original value unreadable without the correct decryption process, which is especially useful for personal profile information or other private fields.
+
+- **Schema Design Must Consider Encryption Early** - One important lesson we learned is that encryption cannot be treated as something added at the very end of development. When designing a user schema, we need to think carefully from the beginning about which fields should be encrypted, which fields may need to stay searchable, and which fields may need special database constraints such as `unique`.
+
+- **Conflict Between Encryption and Uniqueness** - A major challenge appears when a field needs to be encrypted, must remain unique, and also needs to be editable by the user. Once a value is encrypted, it often cannot be compared in a simple way for uniqueness unless the encryption strategy is designed around that requirement. This means fields such as email addresses or usernames require more planning if we want both privacy and database-level uniqueness.
+
+- **Editability Adds More Complexity** - Allowing users to modify encrypted fields adds another layer of complexity. Each update must ensure that the new value is processed correctly, stored securely, and still checked against any uniqueness requirements. Without this being planned early, the update flow can become difficult to maintain and may introduce bugs or inconsistent data.
+
+- **Performance Trade-offs** - Encryption improves security, but it also adds processing overhead. If too many fields are encrypted, especially in frequently read or updated data, application performance can begin to decline. This reminded us that security design also needs to consider efficiency, and that not every piece of data should be encrypted without evaluating the performance cost.
