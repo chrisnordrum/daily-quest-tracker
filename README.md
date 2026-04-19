@@ -422,6 +422,7 @@ Output encoding prevents XSS attacks by ensuring that any dynamic content is tre
 On the frontend, this is further reinforced by using React, which automatically escapes dynamic content by default. This means user-generated data is safely displayed without being interpreted as HTML or JavaScript, unless explicitly overridden (such as with dangerouslySetInnerHTML, which is avoided).
 
 ---
+
 ## Integration of Frontend and Backend Validation
 
 Frontend and backend validation work together to create a layered approach to application security. On the frontend, input is first sanitized and validated to provide immediate feedback to users and prevent obviously incorrect or unsafe data from being submitted. This improves usability while reducing unnecessary server requests.
@@ -494,15 +495,15 @@ Some risks felt less severe than expected. Denial of service, for example, is po
 
 #### Impact on Risk Decisions
 
-| Threat Area                         | Severity                                                                 | Likelihood                                                                | Decision / Action Taken |
-|-----------------------------------|--------------------------------------------------------------------------|---------------------------------------------------------------------------|------------------------|
-| Authentication & JWT Handling     | ![High](https://img.shields.io/badge/High-ff6b81?style=for-the-badge&logo=none) | ![High](https://img.shields.io/badge/High-ff6b81?style=for-the-badge&logo=none) | Prioritized secure token system (short-lived access tokens + HttpOnly refresh tokens), strict verification on backend |
-| Role-Based Access (Admin vs User) | ![High](https://img.shields.io/badge/High-ff6b81?style=for-the-badge&logo=none) | ![Medium](https://img.shields.io/badge/Medium-ffd166?style=for-the-badge&logo=none) | Enforced authorization on both frontend and backend, added middleware to block unauthorized access |
-| Input Validation (User → Server)  | ![High](https://img.shields.io/badge/High-ff6b81?style=for-the-badge&logo=none) | ![High](https://img.shields.io/badge/High-ff6b81?style=for-the-badge&logo=none) | Implemented layered validation (frontend sanitization + backend validation with express-validator) |
-| Data Protection (Server → Database)| ![High](https://img.shields.io/badge/High-ff6b81?style=for-the-badge&logo=none) | ![Medium](https://img.shields.io/badge/Medium-ffd166?style=for-the-badge&logo=none) | Restricted sensitive data exposure, avoided caching user data, ensured safe API responses |
-| Information Disclosure            | ![High](https://img.shields.io/badge/High-ff6b81?style=for-the-badge&logo=none) | ![Medium](https://img.shields.io/badge/Medium-ffd166?style=for-the-badge&logo=none) | Used output encoding (React defaults), controlled API responses and error messages |
-| Denial of Service (DoS)           | ![Medium](https://img.shields.io/badge/Medium-ffd166?style=for-the-badge&logo=none) | ![Low](https://img.shields.io/badge/Low-6ee7b7?style=for-the-badge&logo=none) | Acknowledged risk but deferred; planned future improvements like rate limiting |
-| Dependency Vulnerabilities        | ![Medium](https://img.shields.io/badge/Medium-ffd166?style=for-the-badge&logo=none) | ![Medium](https://img.shields.io/badge/Medium-ffd166?style=for-the-badge&logo=none) | Used automated checks (npm audit, GitHub Actions) to monitor and update dependencies |
+| Threat Area                         | Severity                                                                            | Likelihood                                                                          | Decision / Action Taken                                                                                               |
+| ----------------------------------- | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Authentication & JWT Handling       | ![High](https://img.shields.io/badge/High-ff6b81?style=for-the-badge&logo=none)     | ![High](https://img.shields.io/badge/High-ff6b81?style=for-the-badge&logo=none)     | Prioritized secure token system (short-lived access tokens + HttpOnly refresh tokens), strict verification on backend |
+| Role-Based Access (Admin vs User)   | ![High](https://img.shields.io/badge/High-ff6b81?style=for-the-badge&logo=none)     | ![Medium](https://img.shields.io/badge/Medium-ffd166?style=for-the-badge&logo=none) | Enforced authorization on both frontend and backend, added middleware to block unauthorized access                    |
+| Input Validation (User → Server)    | ![High](https://img.shields.io/badge/High-ff6b81?style=for-the-badge&logo=none)     | ![High](https://img.shields.io/badge/High-ff6b81?style=for-the-badge&logo=none)     | Implemented layered validation (frontend sanitization + backend validation with express-validator)                    |
+| Data Protection (Server → Database) | ![High](https://img.shields.io/badge/High-ff6b81?style=for-the-badge&logo=none)     | ![Medium](https://img.shields.io/badge/Medium-ffd166?style=for-the-badge&logo=none) | Restricted sensitive data exposure, avoided caching user data, ensured safe API responses                             |
+| Information Disclosure              | ![High](https://img.shields.io/badge/High-ff6b81?style=for-the-badge&logo=none)     | ![Medium](https://img.shields.io/badge/Medium-ffd166?style=for-the-badge&logo=none) | Used output encoding (React defaults), controlled API responses and error messages                                    |
+| Denial of Service (DoS)             | ![Medium](https://img.shields.io/badge/Medium-ffd166?style=for-the-badge&logo=none) | ![Low](https://img.shields.io/badge/Low-6ee7b7?style=for-the-badge&logo=none)       | Acknowledged risk but deferred; planned future improvements like rate limiting                                        |
+| Dependency Vulnerabilities          | ![Medium](https://img.shields.io/badge/Medium-ffd166?style=for-the-badge&logo=none) | ![Medium](https://img.shields.io/badge/Medium-ffd166?style=for-the-badge&logo=none) | Used automated checks (npm audit, GitHub Actions) to monitor and update dependencies                                  |
 
 ### 3. Manual Testing
 
@@ -533,33 +534,37 @@ Potential injection vulnerabilities
 Insecure dependencies or outdated libraries
 
 ---
+
 #### Vulnerabilities Found:
 
 1. **CSP Wildcard / Overly Broad Directive**
+
 - **Type of Vulnerability:** Security Misconfiguration (Content Security Policy weakness)
 - **Affected Area:** Application-wide HTTP response headers (Content-Security-Policy)
 - **Severity Level:** Medium
 - **Description:**
-The Content Security Policy (CSP) is configured with overly broad directives, specifically within the style-src policy. The configuration allows sources that are too permissive, reducing the effectiveness of CSP as a defense against attacks like Cross-Site Scripting (XSS).
+  The Content Security Policy (CSP) is configured with overly broad directives, specifically within the style-src policy. The configuration allows sources that are too permissive, reducing the effectiveness of CSP as a defense against attacks like Cross-Site Scripting (XSS).
 - **Why This Is a Problem:**
-An overly permissive CSP can allow malicious content (such as injected scripts or styles) to execute in the browser. This weakens one of the main protections against XSS and data injection attacks.
+  An overly permissive CSP can allow malicious content (such as injected scripts or styles) to execute in the browser. This weakens one of the main protections against XSS and data injection attacks.
 - **Recommended Fixes:**
-Restrict style-src to only trusted domains (e.g., 'self' and specific CDN domains if needed)
+  Restrict style-src to only trusted domains (e.g., 'self' and specific CDN domains if needed)
 
 2. **CSP Allows unsafe-inline Styles**
+
 - **Type of Vulnerability:** Security Misconfiguration (CSP – Unsafe Inline Usage)
 - **Affected Area:** Frontend styling and CSP header configuration
 - **Severity Level:** Medium
 - **Description:**
-The CSP includes 'unsafe-inline' in the style-src directive. This allows inline CSS to be executed directly within HTML, which weakens CSP protections.
+  The CSP includes 'unsafe-inline' in the style-src directive. This allows inline CSS to be executed directly within HTML, which weakens CSP protections.
 - **Why This Is a Problem:**
-Allowing 'unsafe-inline' can enable attackers to inject malicious styles or potentially exploit style-based attacks. While it primarily affects CSS, it can still be used in combination with other vulnerabilities to bypass security controls.
+  Allowing 'unsafe-inline' can enable attackers to inject malicious styles or potentially exploit style-based attacks. While it primarily affects CSS, it can still be used in combination with other vulnerabilities to bypass security controls.
 - **Recommended Fixes:**
-Remove 'unsafe-inline' from the style-src directive
+  Remove 'unsafe-inline' from the style-src directive
 
 ---
 
 ## Vulnerability Fixes
+
 Two related vulnerabilities were identified in the application’s **Content Security Policy (CSP)** configuration. Both issues reduced the effectiveness of CSP as a defense against client-side attacks.
 
 ---
@@ -600,17 +605,48 @@ Two related vulnerabilities were identified in the application’s **Content Sec
 
 ### Summary
 
-By tightening the `style-src` directive and removing `'unsafe-inline'`, the CSP was made significantly more restrictive. These changes improved the application’s resistance to injection attacks while maintaining expected functionality.
----
+## By tightening the `style-src` directive and removing `'unsafe-inline'`, the CSP was made significantly more restrictive. These changes improved the application’s resistance to injection attacks while maintaining expected functionality.
+
 ## Testing Tools
-| Tool                          | Category                | Purpose                                                                 | Contribution to Security Evaluation |
-|-------------------------------|------------------------|-------------------------------------------------------------------------|------------------------------------|
-| Figma                         | Threat Modeling        | Used to design and visualize the system architecture and data flow diagram | Helped identify potential threat points across user, server, and database interactions using STRIDE |
-| OWASP ZAP (Zed Attack Proxy)  | Dynamic Testing / Vulnerability Scanning | Automated tool for scanning web applications for common security vulnerabilities | Detected issues such as XSS, insecure headers, and potential injection points, helping validate and strengthen application security |
-| express-validator             | Input Validation       | Middleware for validating and sanitizing incoming request data on the backend | Ensured all user input is properly validated, reducing risks of injection attacks and malformed data |
-| Custom Sanitizers (Frontend)  | Input Sanitization     | Functions used to clean and normalize user input before submission       | Prevented unsafe characters and improved first layer of defense against malicious input |
-| Helmet                        | Security Headers       | Middleware to configure HTTP security headers                           | Protected against common attacks like clickjacking and improved overall browser-side security |
-| npm audit / GitHub Actions    | Dependency Scanning    | Automated tools to detect vulnerabilities in third-party packages        | Identified outdated or vulnerable dependencies and supported regular security maintenance |
+
+| Tool                         | Category                                 | Purpose                                                                          | Contribution to Security Evaluation                                                                                                 |
+| ---------------------------- | ---------------------------------------- | -------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Figma                        | Threat Modeling                          | Used to design and visualize the system architecture and data flow diagram       | Helped identify potential threat points across user, server, and database interactions using STRIDE                                 |
+| OWASP ZAP (Zed Attack Proxy) | Dynamic Testing / Vulnerability Scanning | Automated tool for scanning web applications for common security vulnerabilities | Detected issues such as XSS, insecure headers, and potential injection points, helping validate and strengthen application security |
+| express-validator            | Input Validation                         | Middleware for validating and sanitizing incoming request data on the backend    | Ensured all user input is properly validated, reducing risks of injection attacks and malformed data                                |
+| Custom Sanitizers (Frontend) | Input Sanitization                       | Functions used to clean and normalize user input before submission               | Prevented unsafe characters and improved first layer of defense against malicious input                                             |
+| Helmet                       | Security Headers                         | Middleware to configure HTTP security headers                                    | Protected against common attacks like clickjacking and improved overall browser-side security                                       |
+| npm audit / GitHub Actions   | Dependency Scanning                      | Automated tools to detect vulnerabilities in third-party packages                | Identified outdated or vulnerable dependencies and supported regular security maintenance                                           |
+
+## Ethical Responsibilities of Security Professionals
+
+During this project, we made sure our security testing stayed within ethical boundaries. Our main testing tool was OWASP ZAP, which we used to scan for common web vulnerabilities such as weak security headers, insecure configurations, and possible input validation issues. All testing was performed only on our own application and within our own development environment.
+
+We understand that security testing should never be performed on websites, systems, or services without permission. Even if the purpose is educational, testing another organization’s application without authorization would be unethical and could create unnecessary risk.
+
+Since the project is still in development, we did not use real user data. Instead, we worked with test accounts and sample data. Even though the data was not real, we still treated it with the same level of care we would use for production data. This helped us build good security habits early in development.
+
+We also used Docker to simulate a more realistic deployment environment. This gave us the opportunity to test the application in conditions closer to a real server setup while keeping everything controlled and safe.
+
+When weaknesses were identified through ZAP, our goal was to understand them and improve the application rather than misuse them. For example, we reviewed token storage, validation logic, security headers, and access control decisions to strengthen the overall security of the project.
+
+## Legal Implications of Security Testing
+
+Security testing also comes with legal responsibilities. Running vulnerability scans or attempting security tests on a system without permission can violate laws, policies, or terms of service, especially if it impacts data, users, or system availability. Because of this, all ZAP scans and related testing for this project were limited to our own application and approved project environment.
+
+Although our application is still in development and does not yet use real user data, privacy laws are still important to consider. As this project was developed in Canada, regulations such as PIPEDA are useful references for how personal information should be collected, stored, and protected if the application is deployed publicly in the future.
+
+These legal and privacy considerations influenced several technical decisions in our project:
+
+- using HTTPS to protect data during transmission
+- hashing passwords with argon2
+- storing refresh tokens in HttpOnly cookies
+- encrypting sensitive fields
+- restricting access through role-based authorization
+- avoiding caching of sensitive responses
+
+We also used Docker to create a more realistic server-like environment for development and testing. This helped us test the application in an environment that feels closer to a real server setup, while still keeping everything safe and controlled during development.
+
 ---
 
 ## AI Tools
@@ -716,7 +752,21 @@ For this part of the project, I used ChatGPT to help generate and refine the Git
 ### Phase 4: Security Testing and Ethical and Legal Considerations
 
 - **Early Integration of Security Principles** - Incorporating security considerations from the beginning of development is more effective than attempting to address vulnerabilities after implementation.
+
 - **Importance of Secure Authentication Mechanisms** - The authentication and token management system is a critical component, as it governs access to all protected resources within the application.
+
 - **Necessity of Backend Enforcement** - While frontend protections enhance user experience, true security must be enforced at the backend through validation and authorization mechanisms.
+
 - **Effectiveness of a Layered Security Approach** - Combining multiple security measures, such as input validation, output encoding, and access control, significantly strengthens the overall security posture.
+
 - **Risk-Based Prioritization of Security Efforts** - Focusing on high-impact and high-likelihood threats first allows for more efficient use of development time while ensuring critical vulnerabilities are addressed early.
+
+- **Responsible Security Testing** - Security testing should always be performed within authorized environments. In our case, all OWASP ZAP scans and testing activities were limited to our own application and development setup, which helped us learn safely while respecting ethical boundaries.
+
+- **Importance of Data Privacy from the Start** - Even though the project is still in development and does not yet use real user data, we treated test accounts and sample data with the same level of care as production data. This helped us build stronger privacy habits early in the project lifecycle.
+
+- **Value of Realistic Testing Environments** - Using Docker allowed us to simulate a more realistic server-like environment during development. This gave us better insight into how security configurations and application behavior may perform in production.
+
+- **Ethics Beyond Technical Fixes** - Web security is not only about finding vulnerabilities. It also involves acting responsibly, avoiding misuse of tools, protecting data carefully, and making decisions that build trust with future users.
+
+- **Legal Awareness in Security Work** - Security testing can carry legal implications when performed without permission or when personal data is mishandled. Learning about privacy frameworks such as PIPEDA helped us better understand the legal responsibilities connected to modern web development.
