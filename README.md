@@ -532,36 +532,85 @@ Missing or misconfigured security headers (e.g., CSP, X-Frame-Options)
 Potential injection vulnerabilities
 Insecure dependencies or outdated libraries
 
+---
 #### Vulnerabilities Found:
 
 1. **CSP Wildcard / Overly Broad Directive**
-- Type of Vulnerability: Security Misconfiguration (Content Security Policy weakness)
-- Affected Area: Application-wide HTTP response headers (Content-Security-Policy)
-- Severity Level: Medium
-- Description:
+- **Type of Vulnerability:** Security Misconfiguration (Content Security Policy weakness)
+- **Affected Area:** Application-wide HTTP response headers (Content-Security-Policy)
+- **Severity Level:** Medium
+- **Description:**
 The Content Security Policy (CSP) is configured with overly broad directives, specifically within the style-src policy. The configuration allows sources that are too permissive, reducing the effectiveness of CSP as a defense against attacks like Cross-Site Scripting (XSS).
-- Why This Is a Problem:
+- **Why This Is a Problem:**
 An overly permissive CSP can allow malicious content (such as injected scripts or styles) to execute in the browser. This weakens one of the main protections against XSS and data injection attacks.
-- Recommended Fixes:
+- **Recommended Fixes:**
 Restrict style-src to only trusted domains (e.g., 'self' and specific CDN domains if needed)
 
 2. **CSP Allows unsafe-inline Styles**
-- Type of Vulnerability: Security Misconfiguration (CSP – Unsafe Inline Usage)
-- Affected Area: Frontend styling and CSP header configuration
-- Severity Level: Medium
-- Description:
+- **Type of Vulnerability:** Security Misconfiguration (CSP – Unsafe Inline Usage)
+- **Affected Area:** Frontend styling and CSP header configuration
+- **Severity Level:** Medium
+- **Description:**
 The CSP includes 'unsafe-inline' in the style-src directive. This allows inline CSS to be executed directly within HTML, which weakens CSP protections.
-- Why This Is a Problem:
+- **Why This Is a Problem:**
 Allowing 'unsafe-inline' can enable attackers to inject malicious styles or potentially exploit style-based attacks. While it primarily affects CSS, it can still be used in combination with other vulnerabilities to bypass security controls.
-- Recommended Fixes:
+- **Recommended Fixes:**
 Remove 'unsafe-inline' from the style-src directive
 
 ---
 
 ## Vulnerability Fixes
+Two related vulnerabilities were identified in the application’s **Content Security Policy (CSP)** configuration. Both issues reduced the effectiveness of CSP as a defense against client-side attacks.
 
+---
 
+#### 1. Overly Broad `style-src` Directive
 
+- **Issue:**  
+  The CSP configuration allowed overly broad sources in the `style-src` directive, making it too permissive.
+
+- **Fix Implemented:**  
+  The `style-src` directive was restricted to `'self'`, ensuring that only styles hosted within the application are allowed. External or untrusted sources were removed unless explicitly required.
+
+- **Impact of Fix:**  
+  This significantly reduced the risk of malicious styles being loaded from external sources and strengthened protection against injection-based attacks.
+
+---
+
+#### 2. Use of `'unsafe-inline'` in `style-src`
+
+- **Issue:**  
+  The CSP included `'unsafe-inline'`, which allowed inline CSS to execute directly within HTML.
+
+- **Fix Implemented:**  
+  The `'unsafe-inline'` value was removed from the `style-src` directive. All styling was moved to external stylesheets controlled by the application.
+
+- **Impact of Fix:**  
+  Removing `'unsafe-inline'` improved CSP enforcement by preventing inline style injection, which can be used alongside other vulnerabilities to bypass security controls.
+
+---
+
+### Validation Process
+
+- The application was re-tested using OWASP ZAP to confirm that CSP-related warnings were resolved.
+- Browser developer tools were used to verify that only approved style sources (`'self'`) were being loaded.
+- Functional testing was performed to ensure that removing inline styles did not break the UI.
+
+---
+
+### Summary
+
+By tightening the `style-src` directive and removing `'unsafe-inline'`, the CSP was made significantly more restrictive. These changes improved the application’s resistance to injection attacks while maintaining expected functionality.
+---
+## Testing Tools
+| Tool                          | Category                | Purpose                                                                 | Contribution to Security Evaluation |
+|-------------------------------|------------------------|-------------------------------------------------------------------------|------------------------------------|
+| Figma                         | Threat Modeling        | Used to design and visualize the system architecture and data flow diagram | Helped identify potential threat points across user, server, and database interactions using STRIDE |
+| OWASP ZAP (Zed Attack Proxy)  | Dynamic Testing / Vulnerability Scanning | Automated tool for scanning web applications for common security vulnerabilities | Detected issues such as XSS, insecure headers, and potential injection points, helping validate and strengthen application security |
+| express-validator             | Input Validation       | Middleware for validating and sanitizing incoming request data on the backend | Ensured all user input is properly validated, reducing risks of injection attacks and malformed data |
+| Custom Sanitizers (Frontend)  | Input Sanitization     | Functions used to clean and normalize user input before submission       | Prevented unsafe characters and improved first layer of defense against malicious input |
+| Helmet                        | Security Headers       | Middleware to configure HTTP security headers                           | Protected against common attacks like clickjacking and improved overall browser-side security |
+| npm audit / GitHub Actions    | Dependency Scanning    | Automated tools to detect vulnerabilities in third-party packages        | Identified outdated or vulnerable dependencies and supported regular security maintenance |
 ---
 
 ## AI Tools
