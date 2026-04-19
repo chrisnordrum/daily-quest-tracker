@@ -38,7 +38,7 @@ app.use(
         frameAncestors: ["'none'"], // The document cannot be loaded in any frame => to avoid clickjacking attacks
         imgSrc: ["'self'", "data:"],
         scriptSrc: ["'self'"],
-        styleSrc: ["'self'", "https:", "'unsafe-inline'"], // This is Helmet.js' default setting, will need adjusting
+        styleSrc: ["'self'"], // Only load styles from self
       },
     },
     xFrameOptions: { action: "deny" }, // Legacy fallback for CSP: frameAncestors
