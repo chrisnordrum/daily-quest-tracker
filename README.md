@@ -431,6 +431,7 @@ However, frontend validation alone is not sufficient, as it can be bypassed. For
 In addition, output encoding on the frontend ensures that any data returned from the server is rendered safely. Frameworks like React automatically escape dynamic content, preventing it from being interpreted as executable code in the browser.
 
 Together, these layers form a defense-in-depth strategy. The frontend enhances user experience and filters basic input, while the backend enforces strict security rules. This combined approach significantly reduces the risk of vulnerabilities such as XSS and injection attacks.
+
 ---
 
 ## Encryption Techniques
@@ -464,6 +465,54 @@ Outdated libraries can contain known security vulnerabilities that attackers can
 Automation helps by regularly checking for vulnerabilities and keeping dependencies up to date without needing manual effort.
 
 The risk is that automation can update dependencies without fully understanding the impact, which might introduce bugs or breaking changes.
+
+---
+
+## Security Testing
+
+### 1. Data Flow Diagram (DFD)
+
+The first step involved creating a Data Flow Diagram (DFD) to understand how data moves through the system. This included identifying key components such as the client (Vite frontend), server (Express API), database, and external services.
+
+Once the DFD was established, trust boundaries were defined to highlight where data transitions between different levels of control (e.g., client → server, server → database).
+
+![DORC threat model diagram](image-1.png)
+
+### 2. STRIDE Framework
+
+### 3. Manual Testing
+
+After identifying potential weak points from the DFD, manual testing was conducted to simulate real-world attack scenarios. This included:
+
+**Input Manipulation:** Testing form fields and API requests with unexpected or malicious inputs (e.g., SQL injection strings, script tags for XSS).
+
+**API Testing:** Using tools like Postman to directly interact with backend endpoints and verify whether proper validation and authorization checks were enforced.
+
+**Client-Side Testing:** Inspecting the frontend for exposed sensitive data, improper error messages, or missing security headers.
+
+Manual testing allowed for deeper exploration of logic flaws and edge cases that automated tools may not detect.
+
+### 4. Automated Testing with OWASP ZAP
+
+To complement manual testing, automated vulnerability scanning was performed using OWASP ZAP (Zed Attack Proxy). This tool was used to systematically scan the application for common security issues.
+
+The process included:
+
+**Spidering the Application:** Automatically discovering available routes and endpoints.
+
+**Passive Scanning:** Monitoring traffic for issues like missing security headers or insecure cookies without modifying requests.
+
+The automated scan helped identify:
+
+Missing or misconfigured security headers (e.g., CSP, X-Frame-Options)
+Potential injection vulnerabilities
+Insecure dependencies or outdated libraries
+
+---
+
+## Vulnerability Fixes
+
+
 
 ---
 
