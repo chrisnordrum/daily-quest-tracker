@@ -508,6 +508,30 @@ Missing or misconfigured security headers (e.g., CSP, X-Frame-Options)
 Potential injection vulnerabilities
 Insecure dependencies or outdated libraries
 
+#### Vulnerabilities Found:
+
+1. **CSP Wildcard / Overly Broad Directive**
+- Type of Vulnerability: Security Misconfiguration (Content Security Policy weakness)
+- Affected Area: Application-wide HTTP response headers (Content-Security-Policy)
+- Severity Level: Medium
+- Description:
+The Content Security Policy (CSP) is configured with overly broad directives, specifically within the style-src policy. The configuration allows sources that are too permissive, reducing the effectiveness of CSP as a defense against attacks like Cross-Site Scripting (XSS).
+- Why This Is a Problem:
+An overly permissive CSP can allow malicious content (such as injected scripts or styles) to execute in the browser. This weakens one of the main protections against XSS and data injection attacks.
+- Recommended Fixes:
+Restrict style-src to only trusted domains (e.g., 'self' and specific CDN domains if needed)
+
+2. **CSP Allows unsafe-inline Styles**
+- Type of Vulnerability: Security Misconfiguration (CSP – Unsafe Inline Usage)
+- Affected Area: Frontend styling and CSP header configuration
+- Severity Level: Medium
+- Description:
+The CSP includes 'unsafe-inline' in the style-src directive. This allows inline CSS to be executed directly within HTML, which weakens CSP protections.
+- Why This Is a Problem:
+Allowing 'unsafe-inline' can enable attackers to inject malicious styles or potentially exploit style-based attacks. While it primarily affects CSS, it can still be used in combination with other vulnerabilities to bypass security controls.
+- Recommended Fixes:
+Remove 'unsafe-inline' from the style-src directive
+
 ---
 
 ## Vulnerability Fixes
