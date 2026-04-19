@@ -30,10 +30,12 @@ DORC is a MERN stack RPG-style productivity app that turns habit-building into a
 - [Ouput Encoding Methods](#output-encoding-methods)
 - [Encryption Techniques](#encryption-techniques)
 - [Third-Party Libraries Dependency Management](#third-party-libraries-dependency-management)
+- [Security Testing](#security-testing)
 - [Lessons Learned](#lessons-learned)
   - [Phase 1](#phase-1-establishing-a-secure-https-server)
   - [Phase 2](#phase-2-authentication-and-authorization-mechanisms)
   - [Phase 3](#phase-3-implementing-security-best-practices)
+  - [Phase 4](#phase-4-security-testing-and-ethical-and-legal-considerations)
 
 ---
 
@@ -618,7 +620,7 @@ Two related vulnerabilities were identified in the application’s **Content Sec
 | Helmet                       | Security Headers                         | Middleware to configure HTTP security headers                                    | Protected against common attacks like clickjacking and improved overall browser-side security                                       |
 | npm audit / GitHub Actions   | Dependency Scanning                      | Automated tools to detect vulnerabilities in third-party packages                | Identified outdated or vulnerable dependencies and supported regular security maintenance                                           |
 
-## Ethical Responsibilities of Security Professionals
+### Ethical Responsibilities of Security Professionals
 
 During this project, we made sure our security testing stayed within ethical boundaries. Our main testing tool was OWASP ZAP, which we used to scan for common web vulnerabilities such as weak security headers, insecure configurations, and possible input validation issues. All testing was performed only on our own application and within our own development environment.
 
@@ -630,7 +632,7 @@ We also used Docker to simulate a more realistic deployment environment. This ga
 
 When weaknesses were identified through ZAP, our goal was to understand them and improve the application rather than misuse them. For example, we reviewed token storage, validation logic, security headers, and access control decisions to strengthen the overall security of the project.
 
-## Legal Implications of Security Testing
+### Legal Implications of Security Testing
 
 Security testing also comes with legal responsibilities. Running vulnerability scans or attempting security tests on a system without permission can violate laws, policies, or terms of service, especially if it impacts data, users, or system availability. Because of this, all ZAP scans and related testing for this project were limited to our own application and approved project environment.
 
