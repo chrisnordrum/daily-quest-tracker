@@ -480,6 +480,30 @@ Once the DFD was established, trust boundaries were defined to highlight where d
 
 ### 2. STRIDE Framework
 
+Using the **STRIDE framework** made it much easier to break down risks across the actual flow of the app instead of thinking about security in a vague way.
+
+Looking at the diagram, spoofing was one of the first things that stood out. Since everything depends on the authentication step and JWT flow, it became clear that if tokens were compromised or not verified properly, an attacker could act as a real user or even an admin. This made authentication and token handling feel more critical than expected.
+
+Tampering also became more obvious when following the path from the user to the Express server and database. Any data being sent through requests (like profile updates or quests) could be modified if validation wasn’t strong. This reinforced why both frontend sanitization and backend validation are needed, not just one.
+
+Information disclosure ended up being more serious than it first seemed. From the diagram, the server reads and writes to the users database, which contains sensitive data. If API responses, errors, or caching were handled poorly, that data could be exposed. This risk felt higher after mapping it visually.
+
+Elevation of privilege was another big one, especially with the admin flow clearly separated. Since admins can access the dashboard and broader data, any weakness in role checks could let a normal user access admin routes. Seeing that path in the diagram made it clear this is a high-impact risk.
+
+Some risks felt less severe than expected. Denial of service, for example, is possible through the server endpoints, but given the current scale of the app, it didn’t feel as urgent compared to authentication and access control.
+
+#### Impact on Risk Decisions
+
+| Threat Area                         | Severity                                                                 | Likelihood                                                                | Decision / Action Taken |
+|-----------------------------------|--------------------------------------------------------------------------|---------------------------------------------------------------------------|------------------------|
+| Authentication & JWT Handling     | ![High](https://img.shields.io/badge/High-ff6b81?style=for-the-badge&logo=none) | ![High](https://img.shields.io/badge/High-ff6b81?style=for-the-badge&logo=none) | Prioritized secure token system (short-lived access tokens + HttpOnly refresh tokens), strict verification on backend |
+| Role-Based Access (Admin vs User) | ![High](https://img.shields.io/badge/High-ff6b81?style=for-the-badge&logo=none) | ![Medium](https://img.shields.io/badge/Medium-ffd166?style=for-the-badge&logo=none) | Enforced authorization on both frontend and backend, added middleware to block unauthorized access |
+| Input Validation (User → Server)  | ![High](https://img.shields.io/badge/High-ff6b81?style=for-the-badge&logo=none) | ![High](https://img.shields.io/badge/High-ff6b81?style=for-the-badge&logo=none) | Implemented layered validation (frontend sanitization + backend validation with express-validator) |
+| Data Protection (Server → Database)| ![High](https://img.shields.io/badge/High-ff6b81?style=for-the-badge&logo=none) | ![Medium](https://img.shields.io/badge/Medium-ffd166?style=for-the-badge&logo=none) | Restricted sensitive data exposure, avoided caching user data, ensured safe API responses |
+| Information Disclosure            | ![High](https://img.shields.io/badge/High-ff6b81?style=for-the-badge&logo=none) | ![Medium](https://img.shields.io/badge/Medium-ffd166?style=for-the-badge&logo=none) | Used output encoding (React defaults), controlled API responses and error messages |
+| Denial of Service (DoS)           | ![Medium](https://img.shields.io/badge/Medium-ffd166?style=for-the-badge&logo=none) | ![Low](https://img.shields.io/badge/Low-6ee7b7?style=for-the-badge&logo=none) | Acknowledged risk but deferred; planned future improvements like rate limiting |
+| Dependency Vulnerabilities        | ![Medium](https://img.shields.io/badge/Medium-ffd166?style=for-the-badge&logo=none) | ![Medium](https://img.shields.io/badge/Medium-ffd166?style=for-the-badge&logo=none) | Used automated checks (npm audit, GitHub Actions) to monitor and update dependencies |
+
 ### 3. Manual Testing
 
 After identifying potential weak points from the DFD, manual testing was conducted to simulate real-world attack scenarios. This included:
@@ -618,29 +642,8 @@ For this part of the project, I used ChatGPT to help generate and refine the Git
 
 ### Phase 4: Security Testing and Ethical and Legal Considerations
 
-#### Threat Model Diagram
-![DORC threat model diagram](image-1.png)
-
-Using the **STRIDE framework** made it much easier to break down risks across the actual flow of the app instead of thinking about security in a vague way.
-
-Looking at the diagram, spoofing was one of the first things that stood out. Since everything depends on the authentication step and JWT flow, it became clear that if tokens were compromised or not verified properly, an attacker could act as a real user or even an admin. This made authentication and token handling feel more critical than expected.
-
-Tampering also became more obvious when following the path from the user to the Express server and database. Any data being sent through requests (like profile updates or quests) could be modified if validation wasn’t strong. This reinforced why both frontend sanitization and backend validation are needed, not just one.
-
-Information disclosure ended up being more serious than it first seemed. From the diagram, the server reads and writes to the users database, which contains sensitive data. If API responses, errors, or caching were handled poorly, that data could be exposed. This risk felt higher after mapping it visually.
-
-Elevation of privilege was another big one, especially with the admin flow clearly separated. Since admins can access the dashboard and broader data, any weakness in role checks could let a normal user access admin routes. Seeing that path in the diagram made it clear this is a high-impact risk.
-
-Some risks felt less severe than expected. Denial of service, for example, is possible through the server endpoints, but given the current scale of the app, it didn’t feel as urgent compared to authentication and access control.
-
-#### Impact on Risk Decisions
-
-| Threat Area                         | Severity                                                                 | Likelihood                                                                | Decision / Action Taken |
-|-----------------------------------|--------------------------------------------------------------------------|---------------------------------------------------------------------------|------------------------|
-| Authentication & JWT Handling     | ![High](https://img.shields.io/badge/High-ff6b81?style=for-the-badge&logo=none) | ![High](https://img.shields.io/badge/High-ff6b81?style=for-the-badge&logo=none) | Prioritized secure token system (short-lived access tokens + HttpOnly refresh tokens), strict verification on backend |
-| Role-Based Access (Admin vs User) | ![High](https://img.shields.io/badge/High-ff6b81?style=for-the-badge&logo=none) | ![Medium](https://img.shields.io/badge/Medium-ffd166?style=for-the-badge&logo=none) | Enforced authorization on both frontend and backend, added middleware to block unauthorized access |
-| Input Validation (User → Server)  | ![High](https://img.shields.io/badge/High-ff6b81?style=for-the-badge&logo=none) | ![High](https://img.shields.io/badge/High-ff6b81?style=for-the-badge&logo=none) | Implemented layered validation (frontend sanitization + backend validation with express-validator) |
-| Data Protection (Server → Database)| ![High](https://img.shields.io/badge/High-ff6b81?style=for-the-badge&logo=none) | ![Medium](https://img.shields.io/badge/Medium-ffd166?style=for-the-badge&logo=none) | Restricted sensitive data exposure, avoided caching user data, ensured safe API responses |
-| Information Disclosure            | ![High](https://img.shields.io/badge/High-ff6b81?style=for-the-badge&logo=none) | ![Medium](https://img.shields.io/badge/Medium-ffd166?style=for-the-badge&logo=none) | Used output encoding (React defaults), controlled API responses and error messages |
-| Denial of Service (DoS)           | ![Medium](https://img.shields.io/badge/Medium-ffd166?style=for-the-badge&logo=none) | ![Low](https://img.shields.io/badge/Low-6ee7b7?style=for-the-badge&logo=none) | Acknowledged risk but deferred; planned future improvements like rate limiting |
-| Dependency Vulnerabilities        | ![Medium](https://img.shields.io/badge/Medium-ffd166?style=for-the-badge&logo=none) | ![Medium](https://img.shields.io/badge/Medium-ffd166?style=for-the-badge&logo=none) | Used automated checks (npm audit, GitHub Actions) to monitor and update dependencies |
+- **Early Integration of Security Principles** - Incorporating security considerations from the beginning of development is more effective than attempting to address vulnerabilities after implementation.
+- **Importance of Secure Authentication Mechanisms** - The authentication and token management system is a critical component, as it governs access to all protected resources within the application.
+- **Necessity of Backend Enforcement** - While frontend protections enhance user experience, true security must be enforced at the backend through validation and authorization mechanisms.
+- **Effectiveness of a Layered Security Approach** - Combining multiple security measures, such as input validation, output encoding, and access control, significantly strengthens the overall security posture.
+- **Risk-Based Prioritization of Security Efforts** - Focusing on high-impact and high-likelihood threats first allows for more efficient use of development time while ensuring critical vulnerabilities are addressed early.
